@@ -70,12 +70,14 @@ const CertificatesPage = () => {
         loading: "Uploading certificate template",
         success: (res) => {
           if (!res.success) {
+            setUploading(false);
             return "Upload was not successful";
           }
-
+          setUploading(false);
           console.log("res", res);
         },
         error: () => {
+          setUploading(false);
           return "Error Uploading file";
         },
       });
@@ -184,7 +186,7 @@ const CertificatesPage = () => {
                   id="file-upload"
                   name="file-upload"
                   type="file"
-                  accept="image/png, image/jpeg"
+                  accept="application/pdf"
                   onChange={handleFileChange}
                   className="sr-only"
                   disabled={uploading}
