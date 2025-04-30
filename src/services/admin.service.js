@@ -37,6 +37,11 @@ class AdminService {
     );
     return data;
   }
+
+  async getIssuedCertificatesService() {
+    const {data} = await axiosInstance.get("/certificates");
+    return data;
+  }
 }
 
 const adminService = new AdminService();
