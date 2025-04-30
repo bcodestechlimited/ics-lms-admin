@@ -1,4 +1,7 @@
 import {axiosInstance} from "../lib/axios";
+import {APP_CONFIG} from "../lib/config";
+
+const token = APP_CONFIG.TOKEN || "L&D_ADMIN";
 
 class AuthService {
   baseUrl = "/user";
@@ -8,16 +11,21 @@ class AuthService {
       const {data} = await axiosInstance.post(`${this.baseUrl}/login`, payload);
       return data;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
   async validateUser() {
     try {
-      const {data} = await axiosInstance.get(`${this.baseUrl}/session`);
-      return data
+      const accessToken = localStorage.getItem(token);
+      const {data} = await axiosInstance.get(`${this.baseUrl}/session`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return data;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 }

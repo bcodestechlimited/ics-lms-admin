@@ -1,9 +1,9 @@
-import queryString from "query-string";
-import React, { useState } from "react";
-import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {Select} from "@headlessui/react";
 import clsx from "clsx";
 import {ChevronDownIcon} from "lucide-react";
+import queryString from "query-string";
+import React, {useState} from "react";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {toast} from "sonner";
 import CreateModule from "../../components/add-module";
 import {Button} from "../../components/button";
@@ -77,7 +77,11 @@ export const AddCourseMain = ({mode}) => {
       toast.promise(createCourse.mutateAsync(payload), {
         loading: `Creating course...`,
         success: (response) => {
-          if (response.success) handleSuccess(response, actionType);
+          console.log(response);
+          if (!response?.success) {
+            throw new Error("An error occurred while creating course");
+          }
+          handleSuccess(response, actionType);
           return "Course created successfully";
         },
         error: (error) => {
@@ -231,7 +235,7 @@ export const CustomSelect = ({label, name, value, onChange, options}) => (
   </div>
 );
 
-const CourseHeader = ({ mode }) => (
+const CourseHeader = ({mode}) => (
   <>
     <h3 className="text-2xl font-bold text-myblue satoshi">
       {mode === "edit" ? "Edit Course" : "Add New Course"}
@@ -244,7 +248,7 @@ const CourseHeader = ({ mode }) => (
   </>
 );
 
-const ModuleSection = ({ handleSubmit, btnState, state, onChange }) => (
+const ModuleSection = ({handleSubmit, btnState, state, onChange}) => (
   <div>
     <small className="text-base font-normal text-secondary">
       Module Details
@@ -258,7 +262,7 @@ const ModuleSection = ({ handleSubmit, btnState, state, onChange }) => (
   </div>
 );
 
-const FormActions = ({ isLoading, onSubmit }) => (
+const FormActions = ({isLoading, onSubmit}) => (
   <div className="mt-8 flex gap-5 items-center">
     <Button
       onClick={(e) => onSubmit(e, "continue-to-assessment")}
