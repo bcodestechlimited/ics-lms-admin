@@ -4,7 +4,7 @@ import useAuthStore from "../data/stores/authstore";
 import {APP_CONFIG} from "../lib/config";
 import {authService} from "../services/auth.service";
 
-const token = APP_CONFIG.TOKEN;
+const token = APP_CONFIG.TOKEN || "L&D_ADMIN";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -26,8 +26,6 @@ export const useLogin = () => {
 };
 
 export const useValidateUser = () => {
-  // const queryClient = useQueryClient();
-
   return useQuery({
     queryKey: ["validate-user"],
     queryFn: () => authService.validateUser(),

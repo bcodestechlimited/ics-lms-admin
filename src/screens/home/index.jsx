@@ -26,9 +26,8 @@ const Login = () => {
       return toast.info("Please fill all required fields");
     setLoading(true);
     try {
-      // let res = await axios.post(`/api/v1/user/login`, {...state});
       const payload = {
-        email: state.email,
+        email: state.email.toLowerCase().trim(),
         password: state.password,
       };
 
