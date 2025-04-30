@@ -4,16 +4,20 @@ class CourseService {
   baseUrl = "/course";
 
   async createCourseService(payload) {
-    const formData = new FormData();
-    for (const key in payload) {
-      formData.append(key, payload[key]);
+    try {
+      const formData = new FormData();
+      for (const key in payload) {
+        formData.append(key, payload[key]);
+      }
+      const {data} = await axiosInstance.post(`${this.baseUrl}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return data;
+    } catch (error) {
+      console.log("error", error);
     }
-    const {data} = await axiosInstance.post(`${this.baseUrl}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return data;
   }
 
   async getCoursesService(params) {

@@ -1,7 +1,7 @@
 import {Navigate, Outlet} from "react-router-dom";
-import {useValidateUser} from "../hooks/auth-hook";
-import {PageLoader} from "../components/loader";
 import {toast} from "sonner";
+import {PageLoader} from "../components/loader";
+import {useValidateUser} from "../hooks/auth-hook";
 
 const AuthGuard = () => {
   const {data, isLoading, isError} = useValidateUser();

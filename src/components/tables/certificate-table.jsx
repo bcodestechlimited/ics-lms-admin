@@ -1,21 +1,25 @@
-import { useMemo, useState } from "react";
-import { Button } from "../ui/button";
+import {useMemo, useState} from "react";
 import DataTable from ".";
 
-const data = [
-  {
-    firstName: "John",
-    lastName: "Doe",
-    email: "6o5JH@example.com",
-    course_title: "React",
-    completedAt: new Date(),
-    score: 80,
-    certificateIssued: false,
-  },
-];
-
-export function CertificateTable({ handleIssueCertificate }) {
+export function CertificateTable({data}) {
   const [globalFilter, setGlobalFilter] = useState("");
+
+  const certificates = useMemo(() => {
+    return (
+      data?.responseObject?.data?.map((item) => ({
+        id: item._id,
+        firstName: item.userId?.firstName,
+        lastName: item.userId?.lastName,
+        email: item.userId?.email,
+        course_title: item.courseId?.title,
+        completedAt: item.issuedAt,
+        certificateIssued: true,
+        path: item.path,
+        fileName: item.fileName,
+      })) || []
+    );
+  }, [data]);
+
   const columns = useMemo(
     () => [
       {
@@ -25,12 +29,10 @@ export function CertificateTable({ handleIssueCertificate }) {
       {
         header: "Email",
         accessorKey: "email",
-        cell: (info) => info.getValue(),
       },
       {
         header: "Course Name",
         accessorKey: "course_title",
-        cell: (info) => info.getValue(),
       },
       {
         header: "Date Completed",
@@ -38,48 +40,31 @@ export function CertificateTable({ handleIssueCertificate }) {
         cell: (info) => new Date(info.getValue()).toLocaleDateString(),
       },
       {
-        header: "Score",
-        accessorKey: "score",
-        cell: (info) => info.getValue(),
-      },
-      {
         header: "Certificate Status",
         accessorKey: "certificateIssued",
         cell: (info) => {
-          return info.getValue() === true ? "Issued" : "Not Issued";
-        },
-      },
-      {
-        header: "Action",
-        accessorKey: "action",
-        cell: (info) => {
-          const certificate = info.row.original;
-          const onClick = () => handleIssueCertificate(certificate);
-
-          return (
-            <Button
-              variant={"outline"}
-              className={"bg-myblue text-white rounded-md border-0"}
-              size={"sm"}
-              type="button"
-              onClick={onClick}
-            >
-              Issue certificate
-            </Button>
+          return info.getValue() ? (
+            <div className="rounded-full bg-[#1da16a66] py-2 px-4 w-fit">
+              <p className="text-center text-[#0B6C25]">Issued</p>
+            </div>
+          ) : (
+            <div className="rounded-full bg-[#fed7aa] py-2 px-4 w-fit">
+              <p className="text-center text-[#9a3412]">Not Issued</p>
+            </div>
           );
         },
       },
     ],
-    [handleIssueCertificate]
+    []
   );
   return (
     <div>
       <DataTable
-        data={data || []}
+        data={certificates}
         columns={columns}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
-        pageSize={20}
+        pageSize={10}
       />
     </div>
   );

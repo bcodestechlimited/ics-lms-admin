@@ -27,3 +27,10 @@ export const useUploadCertificateTemplate = () => {
     mutationFn: (payload) => adminService.uploadCertificateTemplate(payload),
   });
 };
+
+export const useGetCertificates = () => {
+  return useQuery({
+    queryKey: ["get-certificates"],
+    queryFn: () => adminService.getIssuedCertificatesService(),
+  });
+};
