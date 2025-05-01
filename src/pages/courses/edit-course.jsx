@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {toast} from "sonner";
 import CreateModule from "../../components/add-module";
@@ -43,8 +43,8 @@ const EditCoursePage = () => {
   useEffect(() => {
     if (data?.responseObject) {
       setFormState({
-        title: data.responseObject.title || "",
-        description: data.responseObject.description || "",
+        title: data.responseObject.data.title || "",
+        description: data.responseObject.data.description || "",
       });
     }
   }, [data]);
@@ -144,7 +144,7 @@ const EditCoursePage = () => {
               {/* <VideoInput /> */}
               {/* <CreateModule /> */}
               <div className="space-y-4">
-                {data?.responseObject.course_modules?.map((module) => (
+                {data?.responseObject.data.course_modules?.map((module) => (
                   <EditModulePage
                     title={module.title}
                     id={module._id}
@@ -180,7 +180,7 @@ const EditCoursePage = () => {
                     handleSaveChangesToEditCourse();
                   }
                   const encodedCourseName = encodeURIComponent(
-                    moduleName || data.responseObject.title
+                    moduleName || data.responseObject.data.title
                   );
                   // toast.success("Course Updated successfully");
                   navigate(

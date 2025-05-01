@@ -30,7 +30,10 @@ export function StudentTable(data, isLoading) {
         header: "Certificate Status",
         accessorKey: "certificateIssued",
         cell: (info) => {
-          return info.getValue() === true ? "Issued" : "Not Issued";
+          
+          return info.row.original.status === "completed"
+            ? "Issued"
+            : "Not Issued";
         },
       },
     ],

@@ -5,7 +5,12 @@ import {DeleteBtn, MainBtn} from "../../components/button";
 import {PageLoader} from "../../components/loader";
 import DeleteModal from "../../components/modals/deletemodal";
 import Shell from "../../components/shell";
-import {useGetCourseById} from "../../hooks/useCourse";
+import {
+  useDeleteCourse,
+  useGetCourseById,
+  useGetCoursePriceById,
+} from "../../hooks/useCourse";
+import {toast} from "sonner";
 
 const createMarkup = (html) => ({
   __html: DOMPurify.sanitize(html || ""),
@@ -14,10 +19,32 @@ const createMarkup = (html) => ({
 const CourseDetails = () => {
   const params = useParams();
   const {data, isLoading} = useGetCourseById({id: params.id});
+  const {data: coursePriceData, isLoading: isCoursePriceLoading} =
+    useGetCoursePriceById({id: params.id});
   const [modal, setModal] = useState("");
   const navigate = useNavigate();
+  const deleteCourse = useDeleteCourse({id: params.id});
 
-  const course = !isLoading && data?.responseObject;
+  const handleDelete = () => {
+    toast.promise(deleteCourse.mutateAsync(), {
+      loading: "Deleteing course...",
+      success: (res) => {
+        if (!res.success) {
+          return "Error deleting course. Try again!";
+        }
+        navigate("/courses");
+        return "Course deleted";
+      },
+      error: () => {
+        return "An error occured while deleting course.";
+      },
+    });
+  };
+
+  const course = !isLoading && data?.responseObject.data;
+  const coursePrice =
+    !isCoursePriceLoading && coursePriceData?.responseObject.data;
+
   const stats = [
     {title: "No. of Modules", value: course?.course_modules?.length || 0},
     {title: "Skill Level", value: course?.skillLevel},
@@ -73,13 +100,16 @@ const CourseDetails = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-            {course?.course_price && (
+            {!isCoursePriceLoading && coursePrice && (
               <div className="bg-blue-50 rounded-2xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   Pricing
                 </h3>
                 <p className="text-3xl font-bold text-blue-600">
-                  NGN {(course?.course_price.coursePricing / 100).toFixed(2)}
+                  NGN{" "}
+                  {!isCoursePriceLoading && coursePrice === null
+                    ? "Unavailable"
+                    : (coursePrice?.coursePricing).toFixed(2)}
                 </p>
               </div>
             )}
@@ -122,7 +152,8 @@ const CourseDetails = () => {
         <DeleteModal
           handleCloseModal={() => setModal("")}
           title="Course"
-          // Add your delete functionality here
+          id={params.id}
+          onClick={handleDelete}
         />
       )}
     </Shell>

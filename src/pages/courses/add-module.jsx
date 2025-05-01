@@ -7,25 +7,26 @@ import {
   PlusIcon,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
+import {useState} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {toast} from "sonner";
 import ImageIcon from "../../assets/image-icon.svg";
 import ListIcon from "../../assets/list-icon.svg";
-import StatementIcon from "../../assets/statement-icon.svg";
 import TextIcon from "../../assets/text-icon.svg";
 import VideoIcon from "../../assets/video-icon.svg";
-import { Button } from "../../components/button";
+import {Button} from "../../components/button";
 import KnowledgeCheck from "../../components/knowledge-check";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
-import { ChartEditorModal } from "../../components/modals/chart-editor-modal";
-import { ChartTypeSelector } from "../../components/modals/chart-type-selector";
+import {ChartEditorModal} from "../../components/modals/chart-editor-modal";
+import {ChartTypeSelector} from "../../components/modals/chart-type-selector";
 import QuoteSection from "../../components/module-quote";
 import ModuleTextarea from "../../components/module-textarea";
 import ModuleVideoInput from "../../components/module-video-input";
-import { useCreateCourseModule } from "../../hooks/useCourse";
+import {useCreateCourseModule} from "../../hooks/useCourse";
 import useCourseModuleCache from "../../hooks/useCourseModuleCache";
+import AddModuleImageInput from "../../components/module-image-input";
+import AddModuleVideoInput from "../../components/add-video-module-input";
 
 const styles = {
   icons: `w-5 h-5 cursor-pointer text-secondary`,
@@ -40,7 +41,7 @@ const defaultChartData = {
       },
     ],
     options: {
-      chart: { type: "bar" },
+      chart: {type: "bar"},
       xaxis: {
         categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
       },
@@ -54,7 +55,7 @@ const defaultChartData = {
       },
     ],
     options: {
-      chart: { type: "line" },
+      chart: {type: "line"},
       xaxis: {
         categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
       },
@@ -63,7 +64,7 @@ const defaultChartData = {
   pie: {
     series: [44, 55, 13, 43, 22],
     options: {
-      chart: { type: "pie" },
+      chart: {type: "pie"},
       labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
     },
   },
@@ -87,6 +88,7 @@ const CourseModulePage = () => {
   const moduleName = getSearch.get("module_name") || "";
   const courseId = getSearch.get("course_id") || "";
   const [moduleTitle, setModuleTitle] = useState(moduleName || "");
+  const [moduleDuration, setModuleDuration] = useState();
   const createCourseModule = useCreateCourseModule();
   const {
     cachedModule,
@@ -104,6 +106,10 @@ const CourseModulePage = () => {
 
   const handleModuleTitle = (e) => {
     setModuleTitle(e.target.value);
+  };
+
+  const handleModuleDuration = (e) => {
+    setModuleDuration(e.target.value);
   };
   // console.log({ contentSections });
 
@@ -201,12 +207,12 @@ const CourseModulePage = () => {
     //   type: "quote",
     //   onClick: (type) => handleAddSection(type),
     // },
-    {
-      icon: StatementIcon,
-      title: "Knowledge Check",
-      type: "knowledge-check",
-      onClick: (type) => handleAddSection(type),
-    },
+    // {
+    //   icon: StatementIcon,
+    //   title: "Knowledge Check",
+    //   type: "knowledge-check",
+    //   onClick: (type) => handleAddSection(type),
+    // },
   ];
 
   const handleEditToggle = (sectionId) => {
@@ -375,41 +381,24 @@ const CourseModulePage = () => {
           );
         case "image":
           return (
-            <div className="space-y-4">
-              <input
-                type="file"
-                accept="image/*"
-                className="block w-full"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    // handle file upload to cloudinary hook here
-                    // handleUpdateContent(section.id, URL.createObjectURL(file));
-                    handleUpdateContent(section.id, file);
-                  }
-                }}
-              />
-              {section.content && (
-                <img
-                  src={section.content}
-                  alt="Uploaded content"
-                  className="max-w-full w-full h-auto max-h-[300px] object-cover"
-                />
-              )}
-            </div>
+            <AddModuleImageInput
+              name={section.id}
+              value={section.content}
+              onChange={(file) => handleUpdateContent(section.id, file)}
+            />
           );
         case "video":
           return (
             <div className="space-y-4">
-              <ModuleVideoInput
-                state={sectionStates[section.id] || {}}
-                setState={(newState) => {
-                  updateSectionState(section.id, newState);
-                  handleUpdateContent(section.id, newState.video);
+              <AddModuleVideoInput
+                name={section.id}
+                value={sectionStates[section.id] ?? section.content}
+                onChange={(file) => {
+                  // keep local preview state
+                  setSectionStates((prev) => ({...prev, [section.id]: file}));
+                  // update for submission
+                  handleUpdateContent(section.id, file);
                 }}
-                name={"video"}
-                ty={"video"}
-                accept="video/*"
               />
             </div>
           );
@@ -567,6 +556,16 @@ const CourseModulePage = () => {
                   className="block h-12 w-full px-2 border rounded-md"
                   onChange={handleModuleTitle}
                   value={moduleTitle}
+                />
+              </div>
+
+              <div className="">
+                <input
+                  type="text"
+                  placeholder="Enter module duration"
+                  className="block h-12 w-full px-2 border rounded-md"
+                  onChange={handleModuleDuration}
+                  value={moduleDuration}
                 />
               </div>
 

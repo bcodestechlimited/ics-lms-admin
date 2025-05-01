@@ -18,7 +18,7 @@ const CouponsPage = () => {
     },
   };
 
-  const {data, isLoading} = useGetCouponAnalytics();
+  const {data, isLoading, refetch} = useGetCouponAnalytics();
 
   return (
     <div>
@@ -46,7 +46,7 @@ const CouponsPage = () => {
         </div>
       </Shell>
       {modal === "open-create-coupon-modal" && (
-        <AddCouponModal setState={setModal} />
+        <AddCouponModal setState={setModal} refetch={refetch} />
       )}
 
       {modal === "open-success-modal" && (

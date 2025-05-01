@@ -176,6 +176,22 @@ export const useAssignCoursesToStaffs = () => {
   });
 };
 
+export const useGetCoursePriceById = (payload) => {
+  return useQuery({
+    queryKey: ["course--price-by-id"],
+    queryFn: () => courseService.getCoursePriceById(payload),
+  });
+};
+
+export const useDeleteCourse = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload) => courseService.deleteCourse(payload),
+    onSuccess: () => queryClient.invalidateQueries({queryKey: ["courses"]}),
+  });
+};
+
 
 // export const useBulkInvitationForOnboarding = () => {
 //   const queryClient = useQueryClient();

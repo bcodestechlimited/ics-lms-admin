@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { Button } from "../../components/button";
+import {useNavigate, useParams} from "react-router-dom";
+import {Button} from "../../components/button";
 import Loader from "../../components/loader";
 import DeactivateModal from "../../components/modals/deactivate-modal";
 import EditCouponModal from "../../components/modals/edit-coupon-modal";
@@ -13,7 +13,8 @@ import {
   useUpdateCouponStatus,
 } from "../../hooks/useCoupon";
 import clsx from "clsx";
-import { toast } from "sonner";
+import {toast} from "sonner";
+import {ChevronLeftIcon} from "lucide-react";
 
 const styles = {
   header: {
@@ -22,15 +23,15 @@ const styles = {
   },
 };
 
-export default function SlugPage() {
-  const { id } = useParams();
+export default function CouponSlugPage() {
+  const {id} = useParams();
   const [modal, setModal] = useState("");
   const updateCouponStatus = useUpdateCouponStatus();
-
-  const { data: couponUsers, isLoading: isCouponUsersLoading } =
+  const navigate = useNavigate();
+  const {data: couponUsers, isLoading: isCouponUsersLoading} =
     useGetCouponUsers(id);
   // fetch coupon
-  const { data, isLoading } = useGetACoupon(id);
+  const {data, isLoading} = useGetACoupon(id);
 
   const isLoadingClassName = isLoading ? "opacity-50 cursor-not-allowed" : "";
   const couponStatusClassName =
@@ -54,7 +55,7 @@ export default function SlugPage() {
           if (!response.success) {
             return "An error occurred while deactivating the coupon";
           }
-
+          navigate("/coupons");
           return "Coupon deactivated successfully";
         },
         error: () => {
@@ -72,6 +73,12 @@ export default function SlugPage() {
     <div>
       <Shell pageHeader="" pageTitle="Coupons">
         <div className="space-y-8">
+          <button
+            className="flex items-center justify-center gap-x-1 text-secondary border rounded-3xl py-2 px-2"
+            onClick={() => navigate(-1)}
+          >
+            <ChevronLeftIcon /> Go Back
+          </button>
           <div className="border bg-white rounded-xl py-[30px] px-5 flex items-center justify-between gap-12">
             <div className="grid grid-cols-2 gap-x-12">
               <div className="space-y-2">

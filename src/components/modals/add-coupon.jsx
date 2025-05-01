@@ -1,21 +1,21 @@
-import { Select } from "@headlessui/react";
+import {Select} from "@headlessui/react";
 import clsx from "clsx";
-import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { toast } from "sonner";
-import { useCreateCoupon } from "../../hooks/useCoupon";
-import { useGetCourse } from "../../hooks/useCourse";
-import { Button } from "../button";
+import {ChevronDownIcon} from "lucide-react";
+import {useState} from "react";
+import {useLocation} from "react-router-dom";
+import {toast} from "sonner";
+import {useCreateCoupon} from "../../hooks/useCoupon";
+import {useGetCourse} from "../../hooks/useCourse";
+import {Button} from "../button";
 import CloseModalIcon from "../close-modal-icon";
-import { TextInput } from "../inputs";
+import {TextInput} from "../inputs";
 import Loader from "../loader";
 import ModalContainer from "./modalcontainer";
 
 const styles = {
   label: `text-main`,
 };
-const AddCouponModal = ({ setState, courseId, courses }) => {
+const AddCouponModal = ({setState, courseId, courses, refetch}) => {
   const location = useLocation();
   // const navigate = useNavigate();
   const handleClose = () => {
@@ -25,7 +25,7 @@ const AddCouponModal = ({ setState, courseId, courses }) => {
     setState("open-success-modal");
   };
 
-  const { data: coursesData, isLoading } = useGetCourse();
+  const {data: coursesData, isLoading} = useGetCourse();
   const createCoupon = useCreateCoupon();
   const [formState, setFormState] = useState({
     course_id: "",
@@ -36,7 +36,7 @@ const AddCouponModal = ({ setState, courseId, courses }) => {
   });
 
   const handleOnchange = (e) => {
-    setFormState({ ...formState, [e.target.name]: e.target.value });
+    setFormState({...formState, [e.target.name]: e.target.value});
   };
 
   const handleCouponSubmit = () => {
@@ -61,6 +61,7 @@ const AddCouponModal = ({ setState, courseId, courses }) => {
           if (response.success) {
             handleClose();
             openSuccessModal();
+            if (refetch) refetch();
             return "Coupon created successfully";
           }
 
@@ -77,10 +78,11 @@ const AddCouponModal = ({ setState, courseId, courses }) => {
     }
   };
 
+  console.log({formState});
+
   return (
     <div>
       <ModalContainer>
-        {/* overlay with spinner */}
         {isLoading && (
           <div className="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50 transition-opacity duration-300">
             <Loader height={20} width={20} />
@@ -116,14 +118,19 @@ const AddCouponModal = ({ setState, courseId, courses }) => {
                   value={formState.course_id}
                   onChange={handleOnchange}
                 >
+                  <option value="" disabled>
+                    Select Course
+                  </option>
                   {!isLoading &&
-                    coursesData?.data?.docs?.map((course) => {
-                      return (
-                        <option key={course._id} value={course._id}>
-                          {course.title}
-                        </option>
-                      );
-                    })}
+                    coursesData?.responseObject?.response?.docs.map(
+                      (course) => {
+                        return (
+                          <option key={course._id} value={course._id}>
+                            {course.title}
+                          </option>
+                        );
+                      }
+                    )}
                 </Select>
                 <ChevronDownIcon
                   className="group pointer-events-none absolute top-4 right-2.5 size-4 fill-white/60 h-4 w-4"
@@ -151,6 +158,9 @@ const AddCouponModal = ({ setState, courseId, courses }) => {
                 value={formState.discountType}
                 onChange={handleOnchange}
               >
+                <option value="" disabled>
+                  Select Discount Type
+                </option>
                 <option value={"FLASH_SALE"}>Flash Sales</option>
                 <option value={"FIRST_TIME_USER"}>First time users</option>
                 <option value={"LIMITED_TIME"}>Limited time Coupon</option>

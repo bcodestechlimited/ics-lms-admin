@@ -13,13 +13,12 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
   const [featureInput, setFeatureInput] = useState("");
   const [error, setError] = useState(null);
 
-  // Handle changes to text inputs for plan details
+ 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const {name, value} = e.target;
+    setFormData((prevData) => ({...prevData, [name]: value}));
   };
 
-  // Adds a feature to the list if input is not empty
   const addFeature = () => {
     if (featureInput.trim() !== "") {
       setFeatures([...features, featureInput.trim()]);
@@ -27,13 +26,11 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
     }
   };
 
-  // Removes a feature from the list based on its index
   const handleRemoveFeature = (index) => {
     const updatedFeatures = features.filter((_, i) => i !== index);
     setFeatures(updatedFeatures);
   };
 
-  // Handle form submission by merging the features into the plan data
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.description || !formData.price) {
@@ -56,7 +53,6 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
         </h2>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         <form onSubmit={handleSubmit}>
-          {/* Plan Name */}
           <div className="mb-4">
             <label className="block text-gray-700">Plan Name</label>
             <input
@@ -68,7 +64,7 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
               required
             />
           </div>
-          {/* Description */}
+
           <div className="mb-4">
             <label className="block text-gray-700">Description</label>
             <textarea
@@ -79,7 +75,7 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
               required
             ></textarea>
           </div>
-          {/* Plan Type */}
+
           <div className="mb-4">
             <label className="block text-gray-700">Plan Type</label>
             <select
@@ -88,12 +84,15 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
               onChange={handleChange}
               className="mt-1 block w-full border rounded px-3 py-2"
             >
+              <option value="" disabled>
+                Select Plan
+              </option>
               <option value="BASIC">Basic</option>
               <option value="PREMIUM">Premium</option>
               <option value="ENTERPRISE">Enterprise</option>
             </select>
           </div>
-          {/* Price */}
+
           <div className="mb-4">
             <label className="block text-gray-700">Price (NGN)</label>
             <input
@@ -105,7 +104,7 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
               required
             />
           </div>
-          {/* Duration */}
+
           <div className="mb-4">
             <label className="block text-gray-700">Duration</label>
             <select
@@ -114,11 +113,14 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
               onChange={handleChange}
               className="mt-1 block w-full border rounded px-3 py-2"
             >
+              <option value="" disabled>
+                Select duration
+              </option>
               <option value="monthly">Monthly</option>
               <option value="yearly">Yearly</option>
             </select>
           </div>
-          {/* Features Section */}
+
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Features</label>
             <div className="mb-2">
@@ -152,7 +154,7 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
               className="mt-1 block w-full border rounded px-3 py-2"
             />
           </div>
-          {/* Form Actions */}
+
           <div className="flex justify-end">
             <button
               type="button"
@@ -165,7 +167,6 @@ const PlanModal = ({ plan, onClose, onSave, loading }) => {
               type="submit"
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
               loading={loading}
-              // disable={}
             >
               Save
             </Button>

@@ -40,6 +40,7 @@ import {MainStudentById} from "./pages/student/[id]";
 import TemplatesPage from "./pages/templates";
 import UsersPage from "./pages/users";
 import Login from "./screens/home";
+import CouponSlugPage from "./pages/coupons/[id]";
 
 SetDefaultHeaders();
 
@@ -110,6 +111,10 @@ const router = createBrowserRouter([
           {
             path: "/coupons",
             element: <CouponsPage />,
+          },
+          {
+            path: "/coupons/:id",
+            element: <CouponSlugPage />,
           },
           {
             path: "/templates",
