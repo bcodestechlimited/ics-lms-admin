@@ -37,7 +37,6 @@ function getCouponStatus(status) {
 
 const CouponTable = ({defaultData, isLoading}) => {
   const [data] = useState(defaultData);
-  // const [modal, setModal] = useState("");
   const [globalFilter, setGlobalFilter] = useState("");
   const navigate = useNavigate();
 

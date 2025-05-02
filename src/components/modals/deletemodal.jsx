@@ -1,11 +1,10 @@
-import React from "react";
+import {useState} from "react";
+import {AiOutlineClose} from "react-icons/ai";
+import {useNavigate, useParams} from "react-router-dom";
 import Delete from "../../assets/delete.svg";
-import { AiOutlineClose } from "react-icons/ai";
-import { Button, MainBtn } from "../button";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {Button, MainBtn} from "../button";
 
-const DeleteModal = ({ handleCloseModal, cancel, loading, onClick, title }) => {
+const DeleteModal = ({handleCloseModal, cancel, loading, onClick, title}) => {
   const [modal, setModal] = useState("");
   const handleClose = () => {
     setModal("");
@@ -57,9 +56,10 @@ const DeleteModal = ({ handleCloseModal, cancel, loading, onClick, title }) => {
   );
 };
 
-const DeletedModal = ({ handleClose, title }) => {
-  const navigate = useNavigate(),
-    { page, id } = useParams();
+const DeletedModal = ({handleClose, title}) => {
+  const navigate = useNavigate();
+  const {page, id} = useParams();
+
   return (
     <div className="fixed z-50 inset-0 bg-myblue bg-opacity-30 flex justify-center h-screen w-full items-center">
       {" "}

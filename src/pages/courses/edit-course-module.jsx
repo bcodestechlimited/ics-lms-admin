@@ -7,27 +7,23 @@ import {
   PlusIcon,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
+import {useEffect, useState} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {toast} from "sonner";
 import ImageIcon from "../../assets/image-icon.svg";
 import ListIcon from "../../assets/list-icon.svg";
-import StatementIcon from "../../assets/statement-icon.svg";
 import TextIcon from "../../assets/text-icon.svg";
 import VideoIcon from "../../assets/video-icon.svg";
-import { Button } from "../../components/button";
+import {Button} from "../../components/button";
 import KnowledgeCheck from "../../components/knowledge-check";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
-import { ChartEditorModal } from "../../components/modals/chart-editor-modal";
-import { ChartTypeSelector } from "../../components/modals/chart-type-selector";
+import {ChartEditorModal} from "../../components/modals/chart-editor-modal";
+import {ChartTypeSelector} from "../../components/modals/chart-type-selector";
 import QuoteSection from "../../components/module-quote";
 import ModuleTextarea from "../../components/module-textarea";
 import ModuleVideoInput from "../../components/module-video-input";
-import {
-  useGetCourseModule,
-  useUpdateCourseModule,
-} from "../../hooks/useModule";
+import {useGetCourseModule, useUpdateCourseModule} from "../../hooks/useModule";
 
 const styles = {
   icons: `w-5 h-5 cursor-pointer text-secondary`,
@@ -42,7 +38,7 @@ const defaultChartData = {
       },
     ],
     options: {
-      chart: { type: "bar" },
+      chart: {type: "bar"},
       xaxis: {
         categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
       },
@@ -56,7 +52,7 @@ const defaultChartData = {
       },
     ],
     options: {
-      chart: { type: "line" },
+      chart: {type: "line"},
       xaxis: {
         categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
       },
@@ -65,7 +61,7 @@ const defaultChartData = {
   pie: {
     series: [44, 55, 13, 43, 22],
     options: {
-      chart: { type: "pie" },
+      chart: {type: "pie"},
       labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
     },
   },
@@ -104,29 +100,66 @@ const EditCourseModulePage = () => {
   };
 
   // new-code
+  // useEffect(() => {
+  //   if (existingModule?.responseObject) {
+  //     setModuleTitle(
+  //       (!isLoading && existingModule?.responseObject?.data?.module.title) || ""
+  //     );
+  //     const sections =
+  //       !isLoading &&
+  //       existingModule?.responseObject?.data?.module?.contentSections;
+  //     if (Array.isArray(sections)) {
+  //       const validSections = sections
+  //         .filter((section) => section)
+  //         .map((section) => ({
+  //           ...section,
+  //           id: section.sectionId || generateId(),
+  //           mongoId: section._id,
+  //           dirty: false,
+  //         }));
+  //       setContentSections(validSections);
+  //     } else {
+  //       setContentSections([]);
+  //     }
+  //   }
+  // }, [existingModule]);
+
   useEffect(() => {
-    if (existingModule?.responseObject) {
-      setModuleTitle(
-        (!isLoading && existingModule?.responseObject?.data?.module.title) || ""
-      );
-      const sections =
-        !isLoading &&
-        existingModule?.responseObject?.data?.module?.contentSections;
-      if (Array.isArray(sections)) {
-        const validSections = sections
-          .filter((section) => section)
-          .map((section) => ({
-            ...section,
-            id: section.sectionId || generateId(),
-            mongoId: section._id,
-            dirty: false,
-          }));
-        setContentSections(validSections);
-      } else {
-        setContentSections([]);
-      }
+    // once the module comes back from the server
+    const mod = existingModule?.responseObject?.data?.module;
+    if (!isLoading && mod) {
+      // 1. Title
+      setModuleTitle(mod.title || "");
+
+      // 2. Build contentSections for the form
+      const sections = Array.isArray(mod.contentSections)
+        ? mod.contentSections
+        : [];
+
+      const validSections = sections.map((section) => {
+        const id = section.sectionId || generateId();
+        return {
+          id,
+          type: section.type,
+          content: section.content, // could be a URL string
+          // keep mongoId only if you need it elsewhere:
+          // mongoId: section._id,
+        };
+      });
+
+      setContentSections(validSections);
+
+      // 3. Seed sectionStates so videos render their URLs immediately
+      const initialStates = validSections.reduce((acc, sec) => {
+        if (sec.type === "video" && typeof sec.content === "string") {
+          acc[sec.id] = sec.content;
+        }
+        return acc;
+      }, {});
+
+      setSectionStates(initialStates);
     }
-  }, [existingModule]);
+  }, [existingModule, isLoading]);
 
   const modules = [
     {
@@ -166,12 +199,12 @@ const EditCourseModulePage = () => {
     //   type: "quote",
     //   onClick: (type) => handleAddSection(type),
     // },
-    {
-      icon: StatementIcon,
-      title: "Knowledge Check",
-      type: "knowledge-check",
-      onClick: (type) => handleAddSection(type),
-    },
+    // {
+    //   icon: StatementIcon,
+    //   title: "Knowledge Check",
+    //   type: "knowledge-check",
+    //   onClick: (type) => handleAddSection(type),
+    // },
   ];
 
   const handleEditToggle = (sectionId) => {
@@ -345,50 +378,48 @@ const EditCourseModulePage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!moduleId) {
-      toast.error("Invalid module, Cannot update.");
+      toast.error("Invalid module, cannot update.");
       return;
     }
 
-    // const prevContentSections =
-    //   existingModule?.responseObject?.contentSections || [];
-    const prevTitle = existingModule?.responseObject?.title || "";
-    const titleChanged = moduleTitle !== prevTitle;
-
-    const updatedSections = contentSections
-      .filter((section) => section.dirty || !section.mongoId)
-      .map((section) => ({
-        ...section,
-        _id: section.mongoId,
-        mongoId: undefined,
-      }));
-
-    if (!titleChanged && updatedSections.length === 0) {
-      toast.info("No changes detected.");
-      return;
-    }
-
-    const payload = {moduleId};
-
-    if (titleChanged) {
-      payload.title = moduleTitle;
-    }
-    if (updatedSections.length > 0) {
-      payload.contentSections = updatedSections;
-    }
-
-    toast.promise(updateCourseModule.mutateAsync(payload), {
-      loading: "Updating course module... ",
-      success: (response) => {
-        // http://localhost:3000/courses/edit-course?course=67d1a7654f5cfae697684aac&type=course&mode=edit
-        navigate(
-          `/courses/edit-course?course=${courseId}&type=course&mode=edit`
-        );
-        return "Course module updated successfully";
-      },
-      error: (error) => {
-        return "Error updating course module";
-      },
+    // 1) Build a clean JS array payload
+    const sectionsPayload = contentSections.map((s) => {
+      // leave File objects in place so the service can detect/upload them
+      if (
+        (s.type === "image" || s.type === "video") &&
+        s.content instanceof File
+      ) {
+        return {id: s.id, type: s.type, content: s.content};
+      }
+      if (s.type === "quote" && s.content.avatar instanceof File) {
+        return {
+          id: s.id,
+          type: s.type,
+          content: {...s.content, avatar: s.content.avatar},
+        };
+      }
+      // everything else (text, URLs, JSON, etc)
+      return {id: s.id, type: s.type, content: s.content};
     });
+
+    // 2) Call your hook with exactly the shape your service expects:
+    toast.promise(
+      updateCourseModule.mutateAsync({
+        moduleId,
+        title: moduleTitle,
+        contentSections: sectionsPayload,
+      }),
+      {
+        loading: "Updating course module…",
+        success: () => {
+          navigate(
+            `/courses/edit-course?course=${courseId}&type=course&mode=edit`
+          );
+          return "Course module updated!";
+        },
+        error: () => "Failed to update module.",
+      }
+    );
   };
 
   const renderContentSection = (section) => {
@@ -445,12 +476,14 @@ const EditCourseModulePage = () => {
           return (
             <div className="space-y-4">
               <ModuleVideoInput
-                state={sectionStates[section.id] || {}}
-                setState={(newState) => {
-                  updateSectionState(section.id, newState);
-                  handleUpdateContent(section.id, newState.video);
+                value={sectionStates[section.id] ?? section.content}
+                onChange={(file) => {
+                  // seed the state to the new File
+                  setSectionStates((prev) => ({...prev, [section.id]: file}));
+                  // also update contentSections so the payload picks it up
+                  handleUpdateContent(section.id, file);
                 }}
-                name={"video"}
+                name={section.id}
                 ty={"video"}
                 accept="video/*"
               />

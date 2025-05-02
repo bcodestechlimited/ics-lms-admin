@@ -2,28 +2,26 @@ import { Upload } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 
-const ModuleVideoInput = ({ name, onChange, state, setState, ty, ...rest }) => {
+const ModuleVideoInput = ({name, value, onChange, ty, accept}) => {
   const ref = useRef();
 
-  const handleClick = () => {
-    ref.current?.click();
-  };
+  let videoSrc = null;
+  if (value instanceof File) videoSrc = URL.createObjectURL(value);
+  else if (typeof value === "string") videoSrc = value;
+
+  const handleClick = () => ref.current?.click();
 
   const handleChangeVideo = (e) => {
-    const file = e?.target.files[0];
+    const file = e.target.files?.[0];
     let err = "";
-    if (!file) {
-      err = `File does not exist`;
-    }
-    if (!file?.type.includes(ty || "video")) {
-      err = `File format not supported. Please upload a video file`;
-    }
+    if (!file) err = "File does not exist";
+    else if (!file.type.includes(ty || "video"))
+      err = "Unsupported format. Please upload a video file.";
     if (err) {
       toast.error(err);
       return;
     }
-
-    setState({ ...state, [name]: file });
+    onChange(file);
   };
 
   return (
@@ -31,26 +29,20 @@ const ModuleVideoInput = ({ name, onChange, state, setState, ty, ...rest }) => {
       <p className="text-base font-medium satoshi text-secondary">
         Choose Video
       </p>
-      {state && state[name] && typeof state[name] !== "string" ? (
+
+      {videoSrc ? (
         <>
-          <div className="rounded-xl border border-dashed h-[300px] flex flex-col justify-center items-center text-gray w-full file_upload">
+          <div className="rounded-xl border-dashed h-[300px] flex items-center justify-center w-full">
             <video
-              src={
-                state[name]?.playback_url &&
-                typeof state[name]?.playback_url === "string"
-                  ? state[name]?.playback_url
-                  : state[name]?.url && typeof state[name]?.url === "string"
-                  ? state[name]?.url
-                  : URL.createObjectURL(state[name])
-              }
+              src={videoSrc}
               controls
               className="w-full h-full object-contain"
             />
           </div>
-          <div className="flex gap-5 justify-end items-center py-3">
+          <div className="flex justify-end gap-5 py-3">
             <button
               onClick={handleClick}
-              className="bg-myblue text-white px-4 py-2 rounded-md hover:bg-myblue/90 transition-colors"
+              className="bg-myblue text-white px-4 py-2 rounded-md hover:bg-myblue/90"
             >
               Upload New
             </button>
@@ -59,28 +51,25 @@ const ModuleVideoInput = ({ name, onChange, state, setState, ty, ...rest }) => {
       ) : (
         <div
           onClick={handleClick}
-          className="h-24 cursor-pointer rounded-xl border w-full flex justify-center items-center"
+          className="h-24 cursor-pointer rounded-xl border w-full flex flex-col justify-center items-center"
         >
-          <div className="text-center">
-            <img src={Upload} alt="" className="mx-auto mb-2" />
-            <p className="text-sm text-[#275A7F] font-medium satoshi">
-              Click to upload
-            </p>
-            <p className="text-xs text-[#275A7F] font-medium satoshi">
-              (mp4, mpeg)
-            </p>
-          </div>
+          <Upload className="mx-auto mb-2" />
+          <p className="text-sm text-[#275A7F] font-medium satoshi">
+            Click to upload
+          </p>
+          <p className="text-xs text-[#275A7F] font-medium satoshi">
+            (mp4, mpeg)
+          </p>
         </div>
       )}
+
       <input
         type="file"
-        title="Upload file"
-        id="file"
         name={name}
-        onChange={handleChangeVideo}
+        accept={accept}
         ref={ref}
+        onChange={handleChangeVideo}
         className="hidden"
-        accept={rest?.accept}
       />
     </div>
   );

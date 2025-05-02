@@ -1,3 +1,4 @@
+import axios from "axios";
 import {axiosInstance} from "../lib/axios";
 
 class CourseService {
@@ -27,7 +28,9 @@ class CourseService {
 
   async getCourseByIdService(payload) {
     const {id} = payload;
-    const {data} = await axiosInstance.get(`${this.baseUrl}/${id}`);
+    const {data} = await axiosInstance.get(
+      `${this.baseUrl}/${id}?role=superadmin`
+    );
     return data;
   }
 
@@ -210,6 +213,22 @@ class CourseService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async getCoursePriceById(payload) {
+    try {
+      const {data} = await axiosInstance.get(
+        `${this.baseUrl}/course-pricing/${payload?.id}`
+      );
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteCourse(payload) {
+    const {data} = await axiosInstance.delete(`${this.baseUrl}/${payload.id}`);
+    return data;
   }
 }
 
