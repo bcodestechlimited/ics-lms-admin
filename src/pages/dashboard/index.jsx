@@ -1,13 +1,114 @@
 import React from "react";
-import {AiFillEye} from "react-icons/ai";
 import {useNavigate} from "react-router-dom";
 import {MainBtn} from "../../components/button";
-import AreaChart from "../../components/charts/area";
+import ChartWrapper from "../../components/chart-wrapper";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
+import {
+  useGetCoursesByCategory,
+  useGetCoursesCreatedOverTime,
+  useGetEnrollmentCounts,
+  useGetSkillLevelDistribution,
+  useGetTopEnrolledCourses,
+} from "../../hooks/useAnalytics";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
+  const {
+    data: overTimeRes,
+    isLoading: loadingOverTime,
+    error: errorOverTime,
+  } = useGetCoursesCreatedOverTime();
+  const {
+    data: byCategoryRes,
+    isLoading: loadingCategory,
+    error: errorCategory,
+  } = useGetCoursesByCategory();
+  const {
+    data: skillRes,
+    isLoading: loadingSkill,
+    error: errorSkill,
+  } = useGetSkillLevelDistribution();
+  const {
+    data: enrollRes,
+    isLoading: loadingEnroll,
+    error: errorEnroll,
+  } = useGetEnrollmentCounts();
+  const {
+    data: topEnrolledRes,
+    isLoading: loadingTop,
+    error: errorTop,
+  } = useGetTopEnrolledCourses();
+
+  const overTimeRaw = overTimeRes?.responseObject ?? [];
+  const overTimeData = overTimeRaw.filter(
+    (d) => d.date != null && d.count != null
+  );
+  const overTimeCats = overTimeData.map((d) => String(d.date));
+  const overTimeCounts = overTimeData.map((d) => Number(d.count));
+
+  const categoryRaw = byCategoryRes?.responseObject ?? [];
+  const categoryData = categoryRaw.filter(
+    (d) => d._id != null && d.count != null
+  );
+  const categoryCats = categoryData.map((d) => String(d._id));
+  const categoryCnts = categoryData.map((d) => Number(d.count));
+
+  const skillRaw = skillRes?.responseObject ?? [];
+  const skillData = skillRaw.filter((d) => d._id != null && d.count != null);
+  const skillCats = skillData.map((d) => String(d._id));
+  const skillCnts = skillData.map((d) => Number(d.count));
+
+  const enrollRaw = enrollRes?.responseObject ?? [];
+  const enrollData = enrollRaw.filter(
+    (d) => d.title != null && d.enrollmentCount != null
+  );
+  const enrollCats = enrollData.map((d) => String(d.title));
+  const enrollCnts = enrollData.map((d) => Number(d.enrollmentCount));
+
+  const topRaw = topEnrolledRes?.responseObject ?? [];
+  const topData = topRaw.filter(
+    (d) => d.title != null && d.enrollmentCount != null
+  );
+  const topCats = topData.map((d) => String(d.title));
+  const topEnrollCnt = topData.map((d) => Number(d.enrollmentCount));
+
+  // --- chart configurations ---
+  const createdOptions = {
+    chart: {id: "courses-over-time"},
+    xaxis: {categories: overTimeCats},
+    stroke: {curve: "smooth"},
+    title: {text: "Courses Created Over Time", align: "center"},
+  };
+  const createdSeries = [{name: "New Courses", data: overTimeCounts}];
+
+  const categoryOptions = {
+    labels: categoryCats,
+    title: {text: "Courses by Category", align: "center"},
+  };
+  const categorySeries = categoryCnts;
+
+  const skillOptions = {
+    labels: skillCats,
+    title: {text: "Courses by Skill Level", align: "center"},
+    plotOptions: {pie: {donut: {size: "60%"}}},
+  };
+  const skillSeries = skillCnts;
+
+  const enrollOptions = {
+    chart: {id: "enroll-counts"},
+    xaxis: {categories: enrollCats},
+    title: {text: "Enrollments per Course", align: "center"},
+  };
+  const enrollSeries = [{name: "Enrollments", data: enrollCnts}];
+
+  const topOptions = {
+    chart: {stacked: false},
+    plotOptions: {bar: {horizontal: true}},
+    xaxis: {categories: topCats},
+    title: {text: "Top 5 Enrolled Courses", align: "center"},
+  };
+  const topSeries = [{name: "Enrollments", data: topEnrollCnt}];
 
   return (
     <div>
@@ -25,7 +126,7 @@ const DashboardPage = () => {
           </div>
           <div className="mt-8 grid lg:grid-cols-4 gap-5"></div>
           <div className="mt-10 flex flex-col lg:flex-row gap-6">
-            <div className="lg:w-[40%] border rounded-2xl">
+            {/* <div className="lg:w-[40%] border rounded-2xl">
               <div className="p-5 border-b">
                 <h3 className="text-xl text-skyblue font-bold satoshi">
                   Website Impressions
@@ -45,12 +146,81 @@ const DashboardPage = () => {
                 </h6>
                 <AreaChart />
               </div>
-            </div>
-            <div className="lg:w-[60%] overflow-y-scroll rounded-2xl p-4 border">
+            </div> */}
+
+            <div className="w-full overflow-y-scroll rounded-2xl p-4">
               <h3 className="text-xl text-skyblue font-bold satoshi">
-                Students
+                Course Analytics
               </h3>
-              <div className="mt-5"></div>
+              <div className="mt-5 space-y-8 grid grid-cols-2 gap-8">
+                {/* Courses Created Over Time */}
+                {loadingOverTime ? (
+                  <p>Loading...</p>
+                ) : errorOverTime ? (
+                  <p>Error loading data</p>
+                ) : (
+                  <ChartWrapper
+                    type="line"
+                    options={createdOptions}
+                    series={createdSeries}
+                  />
+                )}
+
+                {/* Courses by Category */}
+                {loadingCategory ? (
+                  <p>Loading...</p>
+                ) : errorCategory ? (
+                  <p>Error loading data</p>
+                ) : (
+                  <ChartWrapper
+                    type="pie"
+                    options={categoryOptions}
+                    series={categorySeries}
+                  />
+                )}
+
+                {/* Courses by Skill Level */}
+                {loadingSkill ? (
+                  <p>Loading...</p>
+                ) : errorSkill ? (
+                  <p>Error loading data</p>
+                ) : (
+                  <ChartWrapper
+                    type="donut"
+                    options={skillOptions}
+                    series={skillSeries}
+                  />
+                )}
+
+                {/* Top 5 Enrolled Courses */}
+                {loadingTop ? (
+                  <p>Loading...</p>
+                ) : errorTop ? (
+                  <p>Error loading data</p>
+                ) : (
+                  <ChartWrapper
+                    type="bar"
+                    options={topOptions}
+                    series={topSeries}
+                  />
+                )}
+              </div>
+
+              <div className="w-full mt-5">
+                {/* Enrollment Counts */}
+                {loadingEnroll ? (
+                  <p>Loading...</p>
+                ) : errorEnroll ? (
+                  <p>Error loading data</p>
+                ) : (
+                  <ChartWrapper
+                    type="bar"
+                    options={enrollOptions}
+                    series={enrollSeries}
+                    height={500}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

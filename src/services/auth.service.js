@@ -28,6 +28,22 @@ class AuthService {
       throw error;
     }
   }
+
+  async sendPasswordResetLink(payload) {
+    const {data} = await axiosInstance.post(
+      this.baseUrl + "/forgot-password?role=admin",
+      payload
+    );
+    return data;
+  }
+
+  async resetPasswordService(payload) {
+    const {data} = await axiosInstance.post(this.baseUrl + "/reset-password", {
+      newPassword: payload.newPassword,
+      token: payload.token,
+    });
+    return data;
+  }
 }
 
 export const authService = new AuthService();

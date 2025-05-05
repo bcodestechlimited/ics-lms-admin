@@ -149,7 +149,14 @@ const CourseForm = ({
           name="summary"
         />
 
-        <CustomSelect
+        <TextInput
+          label={"Course Category"}
+          value={state.courseCategory}
+          name={"courseCategory"}
+          onChange={onTextChange}
+        />
+
+        {/* <CustomSelect
           label="Course Category"
           name="courseCategory"
           value={state.courseCategory}
@@ -164,7 +171,7 @@ const CourseForm = ({
             {value: "marketing", label: "Marketing"},
             {value: "product management", label: "Product Management"},
           ]}
-        />
+        /> */}
 
         <CustomSelect
           label="Skill Level"

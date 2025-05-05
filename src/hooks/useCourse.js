@@ -192,6 +192,13 @@ export const useDeleteCourse = () => {
   });
 };
 
+export const useGetCourseAssessment = () => {
+  return useQuery({
+    queryKey: ["course-assessment"],
+    queryFn: () => courseService.getCourseAssessmentService(),
+  });
+};
+
 
 // export const useBulkInvitationForOnboarding = () => {
 //   const queryClient = useQueryClient();

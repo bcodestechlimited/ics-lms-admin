@@ -1,41 +1,46 @@
-import { CopyIcon, Trash2 } from "lucide-react";
-import { useState } from "react";
-import DropdownMenu from "./dropdown-menu";
+import {useState} from "react";
+// import DropdownMenu from "./dropdown-menu";
 import ConfirmDeleteModuleModal, {
   ModuleDeletedConfirmationModal,
 } from "./modals/confirm-delete-module-modal";
 
-const CreateModule = ({ handleSubmit, btnState, onChange, state }) => {
+const CreateModule = ({
+  handleSubmit,
+  btnState,
+  onChange,
+  state,
+  isCoursePublished,
+}) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showDeletedConfirmation, setShowDeletedConfirmation] = useState(false);
 
-  const handleDelete = () => {
-    setShowDeleteDialog(true);
-  };
+  // const handleDelete = () => {
+  //   setShowDeleteDialog(true);
+  // };
 
   const handleConfirmDelete = () => {
     setShowDeleteDialog(false);
     setShowDeletedConfirmation(true);
   };
 
-  const dropdownItems = [
-    {
-      label: "Duplicate",
-      icon: <CopyIcon className="w-4 h-4" />,
-      onClick: () => console.log("Edit clicked"),
-    },
-    {
-      label: "Delete Module",
-      icon: <Trash2 className="w-4 h-4" />,
-      onClick: handleDelete,
-      danger: true,
-    },
-    // {
-    //   label: "Save as template",
-    //   icon: <SaveIcon className="w-4 h-4" />,
-    //   onClick: () => console.log("Share clicked"),
-    // },
-  ];
+  // const dropdownItems = [
+  //   {
+  //     label: "Duplicate",
+  //     icon: <CopyIcon className="w-4 h-4" />,
+  //     onClick: () => console.log("Edit clicked"),
+  //   },
+  //   {
+  //     label: "Delete Module",
+  //     icon: <Trash2 className="w-4 h-4" />,
+  //     onClick: handleDelete,
+  //     danger: true,
+  //   },
+  //   {
+  //     label: "Save as template",
+  //     icon: <SaveIcon className="w-4 h-4" />,
+  //     onClick: () => console.log("Share clicked"),
+  //   },
+  // ];
 
   const handleAddModule = (e) => {
     handleSubmit(e, "continue-to-module");
@@ -64,13 +69,13 @@ const CreateModule = ({ handleSubmit, btnState, onChange, state }) => {
             {btnState.isLoading ? "Creating..." : "Add Module"}
           </button>
 
-          <div className="">
+          {/* <div className="">
             <DropdownMenu
               items={dropdownItems}
               position="top-left"
               title={"Edit Information"}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       {showDeleteDialog && (

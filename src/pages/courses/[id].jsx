@@ -132,10 +132,9 @@ const CourseDetails = () => {
           <div className="flex gap-4 mt-12">
             <MainBtn
               text="Edit Course"
-              // /courses/${params.id}/edit
               onClick={() =>
                 navigate(
-                  `/courses/edit-course?course=${params.id}&type=course&mode=edit`
+                  `/courses/edit-course?course=${params.id}&type=course&mode=edit&isPublished=${course?.isPublished}`
                 )
               }
             />

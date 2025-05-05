@@ -35,4 +35,16 @@ export const useValidateUser = () => {
   });
 };
 
+export const useSendPasswordResetLink = () => {
+  return useMutation({
+    mutationFn: (payload) => authService.sendPasswordResetLink(payload),
+  });
+};
+
+export const useResetUserPassword = () => {
+  return useMutation({
+    mutationFn: (payload) => authService.resetPasswordService(payload),
+  });
+};
+
 

@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {AiFillEye, AiFillEyeInvisible} from "react-icons/ai";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {toast} from "sonner";
 import {Button} from "../../components/button";
 import {useLogin} from "../../hooks/auth-hook";
@@ -39,6 +39,7 @@ const Login = () => {
             toast.error("You are not authorized to login");
             return;
           }
+          navigate("/dashboard");
           toast.success("Welcome back!");
         },
         error: (error) => {
@@ -46,7 +47,6 @@ const Login = () => {
           return "An error occurred while logging in";
         },
       });
-      navigate("/dashboard");
     } catch (err) {
       if (err?.response?.status === 429 || err?.response?.status === 405)
         toast.error(err?.response?.data ? err?.response?.data : err?.message);
@@ -113,9 +113,12 @@ const Login = () => {
                   />
                   <small className="smallText">Remember me</small>
                 </div>
-                <small className="smallText cursor-pointer">
+                <Link
+                  to="/auth/forgot-password"
+                  className="smallText cursor-pointer text-blue-500"
+                >
                   Forgot password?
-                </small>
+                </Link>
               </div>
               <Button
                 type="submit"

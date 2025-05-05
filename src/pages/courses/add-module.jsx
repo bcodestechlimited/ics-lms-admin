@@ -8,25 +8,24 @@ import {
   Trash2,
 } from "lucide-react";
 import {useState} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import {toast} from "sonner";
 import ImageIcon from "../../assets/image-icon.svg";
 import ListIcon from "../../assets/list-icon.svg";
 import TextIcon from "../../assets/text-icon.svg";
 import VideoIcon from "../../assets/video-icon.svg";
+import AddModuleVideoInput from "../../components/add-video-module-input";
 import {Button} from "../../components/button";
 import KnowledgeCheck from "../../components/knowledge-check";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
 import {ChartEditorModal} from "../../components/modals/chart-editor-modal";
 import {ChartTypeSelector} from "../../components/modals/chart-type-selector";
+import AddModuleImageInput from "../../components/module-image-input";
 import QuoteSection from "../../components/module-quote";
 import ModuleTextarea from "../../components/module-textarea";
-import ModuleVideoInput from "../../components/module-video-input";
 import {useCreateCourseModule} from "../../hooks/useCourse";
 import useCourseModuleCache from "../../hooks/useCourseModuleCache";
-import AddModuleImageInput from "../../components/module-image-input";
-import AddModuleVideoInput from "../../components/add-video-module-input";
 
 const styles = {
   icons: `w-5 h-5 cursor-pointer text-secondary`,
@@ -87,6 +86,7 @@ const CourseModulePage = () => {
   // const mode = getSearch.get("mode");
   const moduleName = getSearch.get("module_name") || "";
   const courseId = getSearch.get("course_id") || "";
+  const isCoursePublished = getSearch.get("isPublished");
   const [moduleTitle, setModuleTitle] = useState(moduleName || "");
   const [moduleDuration, setModuleDuration] = useState();
   const createCourseModule = useCreateCourseModule();
@@ -96,14 +96,7 @@ const CourseModulePage = () => {
     markUnsavedChanges,
     saveModuleToCache,
   } = useCourseModuleCache(courseId, contentSections);
-
-  // useEffect(() => {
-  //   if (cachedModule) {
-  //     setModuleTitle(cachedModule.title);
-  //     setContentSections(cachedModule.contentSections || []);
-  //   }
-  // }, [cachedModule]);
-
+  console.log({isCoursePublished});
   const handleModuleTitle = (e) => {
     setModuleTitle(e.target.value);
   };
@@ -111,20 +104,9 @@ const CourseModulePage = () => {
   const handleModuleDuration = (e) => {
     setModuleDuration(e.target.value);
   };
-  // console.log({ contentSections });
 
   const generateId = () =>
     `section-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-
-  // const handleChartIconClick = (e) => {
-  //   const rect = e.currentTarget.getBoundingClientRect();
-
-  //   setChartSelectorPosition({
-  //     x: rect.left + -350,
-  //     y: rect.top,
-  //   });
-  //   setShowChartSelector(true);
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -147,9 +129,16 @@ const CourseModulePage = () => {
           const encodedCourseId = encodeURIComponent(courseId);
           if (response.success) {
             // navigate the user to the summary page where they can add more modules
-            navigate(
-              `/courses/course-summary?mode=new_course&course_id=${encodedCourseId}`
-            );
+            // note: check if the course is already published
+            if (isCoursePublished === "true") {
+              navigate(
+                `/courses/course-summary?mode=edit&course_id=${encodedCourseId}&isPublished=${isCoursePublished}`
+              );
+            } else {
+              navigate(
+                `/courses/course-summary?mode=new_course&course_id=${encodedCourseId}&isPublished=${isCoursePublished}`
+              );
+            }
             // navigate the user to the course-assessment page
             // navigate(
             //   "/courses/course-assessment?mode=new_course&module_name=" +
@@ -559,7 +548,7 @@ const CourseModulePage = () => {
                 />
               </div>
 
-              <div className="">
+              {/* <div className="">
                 <input
                   type="text"
                   placeholder="Enter module duration"
@@ -567,7 +556,7 @@ const CourseModulePage = () => {
                   onChange={handleModuleDuration}
                   value={moduleDuration}
                 />
-              </div>
+              </div> */}
 
               {contentSections.map(renderContentSection)}
 

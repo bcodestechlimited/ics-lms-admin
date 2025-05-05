@@ -1,16 +1,16 @@
-import React, { useRef, useState } from "react";
-import { AiOutlineClose, AiOutlineDown } from "react-icons/ai";
-import { MdLogout } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import React, {useRef, useState} from "react";
+import {AiOutlineClose, AiOutlineDown} from "react-icons/ai";
+import {MdLogout} from "react-icons/md";
+import {useNavigate} from "react-router-dom";
 import Avatar from "../assets/avatar.svg";
 import Edit from "../assets/edit.svg";
 import Notification from "../assets/notification.svg";
 import Profile from "../assets/profile.svg";
 import Upload from "../assets/upload.svg";
 import useAuthStore from "../data/stores/authstore";
-import { MainBtn } from "./button";
+import {MainBtn} from "./button";
 
-const MainHeader = ({ text, small }) => {
+const MainHeader = ({text, small}) => {
   const [notification, setNotification] = useState(false),
     [profile, setProfile] = useState(false),
     [edit, setEdit] = useState(false),
@@ -25,7 +25,7 @@ const MainHeader = ({ text, small }) => {
           <h2 className="text-2xl capitalize satoshi text-skyblue font-bold">
             {text}
           </h2>
-          <p className="text-xs satoshi text-main font-normal">{small}</p>
+          <p className="text-xl text-main font-normal">{small}</p>
         </div>
         <div className="flex items-center gap-6">
           {/* <div className="hidden lg:block">
@@ -62,7 +62,7 @@ const MainHeader = ({ text, small }) => {
   );
 };
 
-const NotificationSection = ({ handleClose }) => {
+const NotificationSection = ({handleClose}) => {
   const Arr = [
     {
       title: "Coming Soon",
@@ -129,8 +129,8 @@ const NotificationSection = ({ handleClose }) => {
   );
 };
 
-const ProfileSection = ({ handleClose, handleEdit }) => {
-  const { logout, user } = useAuthStore(),
+const ProfileSection = ({handleClose, handleEdit}) => {
+  const {logout, user} = useAuthStore(),
     navigate = useNavigate(),
     handleLogout = () => {
       logout();
@@ -169,7 +169,7 @@ const ProfileSection = ({ handleClose, handleEdit }) => {
   );
 };
 
-const EditSection = ({ handleClose }) => {
+const EditSection = ({handleClose}) => {
   const navigate = useNavigate();
   return (
     <div className="lg:absolute relative transition-transform  duration-500 lg:p-5 p-2 lg:right-2 z-50  rounded-xl shadow-lg bg-white lg:w-80 w-11/12 mx-auto lg:mx-0">
@@ -203,7 +203,7 @@ const EditSection = ({ handleClose }) => {
     </div>
   );
 };
-export const ImageInput = ({ name, onChange }) => {
+export const ImageInput = ({name, onChange}) => {
   const ref = useRef();
   const handleClick = () => {
     ref.current?.click();

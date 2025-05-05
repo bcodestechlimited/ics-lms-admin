@@ -11,12 +11,12 @@ import { toast } from "sonner";
 function CourseSummaryPage() {
   const [getSearch] = useSearchParams();
   const courseId = getSearch.get("course_id") || "";
+  const isCoursePublished = getSearch.get("isPublished");
   const {data, isLoading, isError} = useGetCourseSummary({id: courseId});
   const [newModuleName, setNewModuleName] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const course = data?.responseObject?.data;
   const navigate = useNavigate();
-
   const handleAddModule = async (e) => {
     e.preventDefault();
     setIsAdding(true);
@@ -27,9 +27,16 @@ function CourseSummaryPage() {
         toast.error("Error");
         return;
       }
-      navigate(
-        `/courses/add-module?mode=new_course&module_name=${encodedModuleName}&course_id=${courseId}`
-      );
+      // note: check if the course has been published if yes then mode = edit
+      if (isCoursePublished === "true") {
+        navigate(
+          `/courses/add-module?mode=edit&module_name=${encodedModuleName}&course_id=${courseId}`
+        );
+      } else {
+        navigate(
+          `/courses/add-module?mode=new_course&module_name=${encodedModuleName}&course_id=${courseId}`
+        );
+      }
       return setNewModuleName("");
     } finally {
       setIsAdding(false);
@@ -58,9 +65,15 @@ function CourseSummaryPage() {
       );
       return;
     }
-    navigate(
-      `/courses/course-assessment?mode=new_course&module_name=${encodedCourseTitle}&course_id=${courseId}`
-    );
+    if (isCoursePublished === "true") {
+      navigate(
+        `/courses/edit-course-assessment?mode=edit&course_id=${courseId}&module_name=${encodedCourseTitle}`
+      );
+    } else {
+      navigate(
+        `/courses/course-assessment?mode=new_course&module_name=${encodedCourseTitle}&course_id=${courseId}`
+      );
+    }
   };
 
   if (isError) {
@@ -92,17 +105,17 @@ function CourseSummaryPage() {
                   </span>
                   <h1 className="text-3xl font-bold mt-2">{course?.title}</h1>
                   <div className="mt-4 flex gap-6 text-muted-foreground">
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4" />
                       <span className="text-sm">
                         {course?.totalDuration || 0} hours
                       </span>
-                    </div>
+                    </div> */}
                     <div className="flex items-center gap-2">
                       <BookOpen className="w-4 h-4" />
-                      <span className="text-sm">
+                      {/* <span className="text-sm">
                         {course?.moduleCount || 0} modules
-                      </span>
+                      </span> */}
                     </div>
                   </div>
                 </>
@@ -145,10 +158,10 @@ function CourseSummaryPage() {
                             )}
                           </div>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
+                            {/* <div className="flex items-center gap-1">
                               <Clock className="w-4 h-4" />
                               <span>{module.duration || 0}h</span>
-                            </div>
+                            </div> */}
                             <span className="bg-primary/10 text-black px-2 py-1 rounded-md text-xs">
                               {module.status || "Draft"}
                             </span>

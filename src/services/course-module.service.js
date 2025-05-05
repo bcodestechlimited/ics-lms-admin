@@ -8,12 +8,7 @@ class ModuleService {
     return data;
   }
 
- 
-  async editModule({
-    moduleId,
-    title,
-    contentSections = [],
-  }) {
+  async editModule({moduleId, title, contentSections = []}) {
     const formData = new FormData();
 
     // 1. Title (optional)
@@ -55,6 +50,11 @@ class ModuleService {
       formData,
       {headers: {"Content-Type": "multipart/form-data"}}
     );
+    return data;
+  }
+
+  async deleteModuleById(moduleId) {
+    const {data} = await axiosInstance.delete(`${this.baseUrl}/${moduleId}`);
     return data;
   }
 }

@@ -42,6 +42,14 @@ class AdminService {
     const {data} = await axiosInstance.get("/certificates");
     return data;
   }
+
+  // /users/:id/toggle-status
+  async toggleUserAccount(id) {
+    const {data} = await axiosInstance.patch(
+      this.BASE_URL + `/users/${id}/toggle-status`
+    );
+    return data;
+  }
 }
 
 const adminService = new AdminService();

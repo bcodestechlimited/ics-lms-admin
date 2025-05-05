@@ -9,12 +9,17 @@ import {
   LayoutTemplateIcon,
   LogOutIcon,
   RouteIcon,
+  Settings2Icon,
   TicketPercentIcon,
   UsersIcon,
 } from "lucide-react";
 import React from "react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {APP_CONFIG} from "../lib/config";
+
+const styles = {
+  icon: `w-4 h-4 `,
+};
 
 const Sidebar = ({isOpen, toggleSidebar}) => {
   const location = useLocation();
@@ -23,53 +28,58 @@ const Sidebar = ({isOpen, toggleSidebar}) => {
   const navItems = [
     {
       name: "Dashboard",
-      icon: <LayoutDashboardIcon className="w-4 h-4" />,
+      icon: <LayoutDashboardIcon className={styles.icon} />,
       path: "/dashboard",
     },
     {
       name: "Courses",
-      icon: <BookOpenIcon className="w-4 h-4" />,
+      icon: <BookOpenIcon className={styles.icon} />,
       path: "/courses",
     },
     {
       name: "Users",
-      icon: <UsersIcon className="w-4 h-4" />,
+      icon: <UsersIcon className={styles.icon} />,
       path: "/users",
     },
     {
       name: "Certificates",
-      icon: <AwardIcon className="w-4 h-4" />,
+      icon: <AwardIcon className={styles.icon} />,
       path: "/certificates",
     },
     {
       name: "Plan",
-      icon: <RouteIcon className="w-4 h-4" />,
+      icon: <RouteIcon className={styles.icon} />,
       path: "/plans",
     },
     {
       name: "Report",
-      icon: <ClipboardPlusIcon className="w-4 h-4" />,
+      icon: <ClipboardPlusIcon className={styles.icon} />,
       path: "/reports",
     },
     {
       name: "Payment",
-      icon: <Banknote className="w-4 h-4" />,
+      icon: <Banknote className={styles.icon} />,
       path: "/payments",
     },
     {
       name: "Coupons",
-      icon: <TicketPercentIcon className="w-4 h-4" />,
+      icon: <TicketPercentIcon className={styles.icon} />,
       path: "/coupons",
     },
     {
       name: "Templates",
-      icon: <LayoutTemplateIcon className="w-4 h-4" />,
+      icon: <LayoutTemplateIcon className={styles.icon} />,
       path: "/templates",
+    },
+    {
+      name: "Settings",
+      icon: <Settings2Icon className={styles.icon} />,
+      path: "/settings",
     },
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem(APP_CONFIG.TOKEN);
+    localStorage.removeItem(APP_CONFIG.TOKEN || "L&D_ADMIN");
     navigate("/login");
   };
 
@@ -115,7 +125,7 @@ const Sidebar = ({isOpen, toggleSidebar}) => {
           className="w-full flex items-center p-3 hover:bg-gray-100 text-red-500 hover:text-red-700"
         >
           <span className="mr-4">
-            <LogOutIcon className="w-4 h-4" />
+            <LogOutIcon className={styles.icon} />
           </span>
           {isOpen && <span className="text-sm">Logout</span>}
         </button>
