@@ -41,6 +41,9 @@ import TemplatesPage from "./pages/templates";
 import UsersPage from "./pages/users";
 import Login from "./screens/home";
 import CouponSlugPage from "./pages/coupons/[id]";
+import SettingsPage from "./pages/settings";
+import ForgotPasswordPage from "./pages/auth/forgot-password";
+import ResetPasswordPage from "./pages/auth/reset-password";
 
 SetDefaultHeaders();
 
@@ -72,6 +75,14 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/auth/forgot-password",
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: "/auth/reset-password",
+    element: <ResetPasswordPage />,
   },
   {
     element: <AuthGuard />,
@@ -175,6 +186,10 @@ const router = createBrowserRouter([
           {
             path: "/courses/edit-module",
             element: <EditModulePage />,
+          },
+          {
+            path: "/settings",
+            element: <SettingsPage />,
           },
         ],
       },

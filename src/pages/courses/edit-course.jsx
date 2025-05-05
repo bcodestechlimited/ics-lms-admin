@@ -26,6 +26,7 @@ const EditCoursePage = () => {
   const [hasChanged, setHasChanged] = useState(false);
   const [loading, setLoading] = useState(false);
   const createTemplateFromCourse = useCreateTemplateFromCourse();
+  const isCoursePublished = queryParams.get("isPublished");
 
   const btnState = {
     isLoading: false,
@@ -60,7 +61,7 @@ const EditCoursePage = () => {
     }
     const encodedModuleName = encodeURIComponent(moduleName);
     navigate(
-      `/courses/add-module?course_id=${course_id}&mode=edit&module_name=${encodedModuleName}`
+      `/courses/add-module?course_id=${course_id}&mode=edit&module_name=${encodedModuleName}&isPublished=${isCoursePublished}`
     );
   };
 
@@ -159,6 +160,7 @@ const EditCoursePage = () => {
                 btnState={btnState}
                 onChange={(e) => setModuleName(e.target.value)}
                 state={moduleName}
+                isCoursePublished={isCoursePublished}
               />
             </div>
             <div className="mt-8 flex gap-5 items-center justify-between">
@@ -184,7 +186,7 @@ const EditCoursePage = () => {
                   );
                   // toast.success("Course Updated successfully");
                   navigate(
-                    `/courses/edit-course-assessment?course_id=${course_id}&mode=edit&course_name=${encodedCourseName}`
+                    `/courses/edit-course-assessment?course_id=${course_id}&mode=edit&course_name=${encodedCourseName}&isPublished=${isCoursePublished}`
                   );
                 }}
                 type={"button"}

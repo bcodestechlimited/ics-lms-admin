@@ -1,4 +1,3 @@
-import axios from "axios";
 import {axiosInstance} from "../lib/axios";
 
 class CourseService {
@@ -228,6 +227,11 @@ class CourseService {
 
   async deleteCourse(payload) {
     const {data} = await axiosInstance.delete(`${this.baseUrl}/${payload.id}`);
+    return data;
+  }
+
+  async getCourseAssessmentService() {
+    const {data} = await axiosInstance.get(`${this.baseUrl}/course-assessment`);
     return data;
   }
 }

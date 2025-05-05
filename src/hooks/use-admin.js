@@ -34,3 +34,9 @@ export const useGetCertificates = () => {
     queryFn: () => adminService.getIssuedCertificatesService(),
   });
 };
+
+export const useAdminToggleStatus = () => {
+  return useMutation({
+    mutationFn: (id) => adminService.toggleUserAccount(id),
+  });
+};

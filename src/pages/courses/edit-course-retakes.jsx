@@ -1,17 +1,13 @@
-import { InfoIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
-// import { Button } from "../../components/button";
-import { TextInput } from "../../components/inputs";
-import { PageLoader } from "../../components/loader";
+import {InfoIcon} from "lucide-react";
+import {useEffect, useState} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {toast} from "sonner";
+import {TextInput} from "../../components/inputs";
+import {PageLoader} from "../../components/loader";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
-import { Button } from "../../components/ui/button";
-import {
-  useEditCourseBenchmark,
-  useGetCourseById,
-} from "../../hooks/useCourse";
+import {Button} from "../../components/ui/button";
+import {useEditCourseBenchmark, useGetCourseById} from "../../hooks/useCourse";
 
 const EditCourseRetakesPage = () => {
   const navigate = useNavigate();
@@ -27,8 +23,8 @@ const EditCourseRetakesPage = () => {
   });
 
   useEffect(() => {
-    if (data?.responseObject?.course_benchmark) {
-      const {retakes, benchmark} = data.responseObject.course_benchmark;
+    if (data?.responseObject?.data?.course_benchmark) {
+      const {retakes, benchmark} = data?.responseObject?.data?.course_benchmark;
       setFormData((prev) => ({
         ...prev,
         retakes,
@@ -51,7 +47,6 @@ const EditCourseRetakesPage = () => {
       [editableField]: !prev[editableField],
     }));
 
-    // If we're disabling edit mode, submit the changes
     if (formData[editableField]) {
       handleUpdate(field.toLowerCase());
     }
@@ -59,7 +54,7 @@ const EditCourseRetakesPage = () => {
 
   const handleUpdate = async (field) => {
     const payload = {
-      benchmark_id: data?.responseObject?.course_benchmark?._id,
+      benchmark_id: data?.responseObject?.data?.course_benchmark?._id,
       courseId,
       [field]: Number(parseInt(formData[field], 10)),
     };
@@ -84,8 +79,6 @@ const EditCourseRetakesPage = () => {
   if (isLoading) {
     return <PageLoader />;
   }
-
-  console.log("data", data.responseObject);
 
   return (
     <div className="satoshi">

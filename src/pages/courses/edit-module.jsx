@@ -1,12 +1,15 @@
-import { CopyIcon, SaveIcon, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Trash2} from "lucide-react";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {toast} from "sonner";
 import DropdownMenu from "../../components/dropdown-menu";
 import ConfirmDeleteModuleModal, {
   ModuleDeletedConfirmationModal,
 } from "../../components/modals/confirm-delete-module-modal";
+import {useDeleteModule} from "../../hooks/useModule";
 
 export default function EditModulePage({title, id, courseId}) {
+  const deleteModule = useDeleteModule();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showDeletedConfirmation, setShowDeletedConfirmation] = useState(false);
   const navigate = useNavigate();
@@ -18,25 +21,39 @@ export default function EditModulePage({title, id, courseId}) {
   const handleConfirmDelete = () => {
     setShowDeleteDialog(false);
     setShowDeletedConfirmation(true);
+
+    toast.promise(deleteModule.mutateAsync(id), {
+      loading: "Deleting module...",
+      success: (res) => {
+        if (!res.success) {
+          throw new Error("Error delting");
+        }
+        window.location.reload();
+        return "Module deleted";
+      },
+      error: (err) => {
+        return err?.data?.response?.message || "Failed to delete module";
+      },
+    });
   };
 
   const dropdownItems = [
-    {
-      label: "Duplicate",
-      icon: <CopyIcon className="w-4 h-4" />,
-      onClick: () => console.log("Edit clicked"),
-    },
+    // {
+    //   label: "Duplicate",
+    //   icon: <CopyIcon className="w-4 h-4" />,
+    //   onClick: () => console.log("Edit clicked"),
+    // },
     {
       label: "Delete Module",
       icon: <Trash2 className="w-4 h-4" />,
       onClick: handleDelete,
       danger: true,
     },
-    {
-      label: "Save as template",
-      icon: <SaveIcon className="w-4 h-4" />,
-      onClick: () => console.log("Share clicked"),
-    },
+    // {
+    //   label: "Save as template",
+    //   icon: <SaveIcon className="w-4 h-4" />,
+    //   onClick: () => console.log("Share clicked"),
+    // },
   ];
 
   return (

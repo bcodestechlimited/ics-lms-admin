@@ -30,6 +30,14 @@ class UserService {
       throw error;
     }
   }
+
+  async updateUserPassword(payload) {
+    const {data} = await axiosInstance.put(
+      this.BASE_URL + "/update-password",
+      payload
+    );
+    return data;
+  }
 }
 
 export const userService = new UserService();

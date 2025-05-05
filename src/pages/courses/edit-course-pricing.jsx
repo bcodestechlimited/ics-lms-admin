@@ -1,25 +1,20 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
-import { Button } from "../../components/button";
-import { TextInput } from "../../components/inputs";
-import { PageLoader } from "../../components/loader";
+import {useEffect, useState} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {toast} from "sonner";
+import {Button} from "../../components/button";
+import {TextInput} from "../../components/inputs";
+import {PageLoader} from "../../components/loader";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
-import {
-  useGetCourseById,
-  useUpdateCoursePricing,
-} from "../../hooks/useCourse";
+import {useGetCourseById, useUpdateCoursePricing} from "../../hooks/useCourse";
 
 const EditCoursePricingPage = () => {
   const [getSearch] = useSearchParams();
   const courseId = getSearch.get("course_id");
   const navigate = useNavigate();
-
   const {data: getCourse, isLoading: isGetCourseLoading} = useGetCourseById({
     id: courseId,
   });
-  // const { data, isLoading } = useGetCoupon();
   const [formData, setFormData] = useState({
     coursePricing: 0,
     isPricingEditable: false,
@@ -27,10 +22,14 @@ const EditCoursePricingPage = () => {
   const updateCoursePricing = useUpdateCoursePricing();
 
   useEffect(() => {
-    if (getCourse?.responseObject && getCourse.responseObject.course_price) {
+    if (
+      getCourse?.responseObject &&
+      getCourse?.responseObject?.data?.course_price
+    ) {
       setFormData((prev) => ({
         ...prev,
-        coursePricing: getCourse.responseObject.course_price.coursePricing,
+        coursePricing:
+          getCourse?.responseObject?.data?.course_price?.coursePricing,
       }));
     }
   }, [getCourse]);
@@ -42,7 +41,7 @@ const EditCoursePricingPage = () => {
   const handleUpdate = async (field) => {
     const payload = {
       courseId,
-      course_price_id: getCourse?.responseObject?.course_price?._id,
+      course_price_id: getCourse?.responseObject?.data?.course_price?._id,
       coursePrice: Number(parseInt(formData.coursePricing, 10)),
     };
 
@@ -81,7 +80,7 @@ const EditCoursePricingPage = () => {
   };
 
   return (
-    <div className="satoshi">
+    <div className="">
       <MainContainer>
         <MainHeader text="Course Details and Module ~ Pricing" small={""} />
 

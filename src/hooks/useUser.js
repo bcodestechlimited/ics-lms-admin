@@ -1,4 +1,4 @@
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {userService} from "../services/user.service";
 
 export const useGetAllStudents = () => {
@@ -19,6 +19,12 @@ export const useGetUserCourseAnalytics = (id) => {
   return useQuery({
     queryKey: ["get-user-course-analytics", id],
     queryFn: () => userService.getUserCourseAnalyticsService(id),
+  });
+};
+
+export const useUpdateUserPassword = () => {
+  return useMutation({
+    mutationFn: (payload) => userService.updateUserPassword(payload),
   });
 };
 

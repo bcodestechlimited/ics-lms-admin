@@ -83,7 +83,7 @@ export const InviteStaffInBulkModal = ({
 
         <div>
           <label className="text-secondary block mb-2 text-[14px]">
-            Course Expiration Date
+            Course Duration (days)
           </label>
           <input
             type="text"

@@ -23,3 +23,9 @@ export const useUpdateCourseModule = () => {
     },
   });
 };
+
+export const useDeleteModule = () => {
+  return useMutation({
+    mutationFn: (payload) => moduleService.deleteModuleById(payload),
+  });
+};
