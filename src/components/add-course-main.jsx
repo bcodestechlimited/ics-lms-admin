@@ -34,11 +34,10 @@ export const AddCourseMain = ({ handleNext, datum }) => {
         courseDescription: state.description,
         courseImage: state.image,
       };
-      const response = await createCourse.mutateAsync(payload);
-      console.log({ response });
+      await createCourse.mutateAsync(payload);
+
       // handle the response
     } catch (error) {
-      console.log(error);
       toast.error("An error occurred while creating course, Try again!");
     } finally {
       setLoading(false);

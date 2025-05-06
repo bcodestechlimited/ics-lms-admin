@@ -1,5 +1,6 @@
 import {axiosInstance} from "../lib/axios";
 
+
 class AnalyticsService {
   baseUrl = "/analytics";
 

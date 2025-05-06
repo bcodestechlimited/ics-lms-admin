@@ -1,12 +1,12 @@
-import { AlertCircle, BookOpen, Clock, ListChecks, Plus } from "lucide-react";
-import React, { useState } from "react";
+import {Button} from "@headlessui/react";
+import {AlertCircle, BookOpen, ListChecks, Plus} from "lucide-react";
+import React, {useState} from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {toast} from "sonner";
 import Shell from "../../components/shell";
-import { useGetCourseSummary } from "../../hooks/useCourse";
-import { Button } from "@headlessui/react";
-import { toast } from "sonner";
+import {useGetCourseSummary} from "../../hooks/useCourse";
 
 function CourseSummaryPage() {
   const [getSearch] = useSearchParams();

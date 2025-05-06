@@ -9,15 +9,16 @@ import Profile from "../assets/profile.svg";
 import Upload from "../assets/upload.svg";
 import useAuthStore from "../data/stores/authstore";
 import {MainBtn} from "./button";
+import {useValidateUser} from "../hooks/auth-hook";
 
 const MainHeader = ({text, small}) => {
-  const [notification, setNotification] = useState(false),
-    [profile, setProfile] = useState(false),
-    [edit, setEdit] = useState(false),
-    handleEdit = () => {
-      setProfile(false);
-      setEdit(true);
-    };
+  const [notification, setNotification] = useState(false);
+  const [profile, setProfile] = useState(false);
+  const [edit, setEdit] = useState(false);
+  const handleEdit = () => {
+    setProfile(false);
+    setEdit(true);
+  };
   return (
     <div>
       <div className="flex justify-between items-center h-20 bg-transparent">
@@ -39,7 +40,9 @@ const MainHeader = ({text, small}) => {
               className="cursor-pointer"
             />
             <div
-              onClick={() => setProfile(true)}
+              onClick={() => {
+                setProfile(true);
+              }}
               className="flex cursor-pointer items-center"
             >
               <img src={Avatar} alt="" className="" />
@@ -130,12 +133,18 @@ const NotificationSection = ({handleClose}) => {
 };
 
 const ProfileSection = ({handleClose, handleEdit}) => {
-  const {logout, user} = useAuthStore(),
-    navigate = useNavigate(),
-    handleLogout = () => {
-      logout();
-      navigate("/");
-    };
+  const {logout} = useAuthStore();
+
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  const {data, isLoading} = useValidateUser();
+  const user = !isLoading && data;
+
+  console.log({user});
 
   return (
     <div className="lg:absolute relative transition-transform  duration-500 lg:p-5 p-2 lg:right-2 z-50  rounded-xl shadow-lg bg-white lg:w-1/3 w-11/12 mx-auto lg:mx-0 h-56">
@@ -145,9 +154,11 @@ const ProfileSection = ({handleClose, handleEdit}) => {
       <div className="flex mt-8 gap-4 items-center">
         <img src={user?.image?.url || Profile} alt="" className="h-28" />
         <div>
+          <h5 className="text-base text-main font-bold">Profile</h5>
           <h5 className="text-2xl text-main font-extrabold">
             {user?.lastName} {user?.firstName}
           </h5>
+          <span className="text-sm">{user?.email}</span>
           <img
             onClick={handleEdit}
             src={Edit}

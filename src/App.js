@@ -47,9 +47,9 @@ import ResetPasswordPage from "./pages/auth/reset-password";
 
 SetDefaultHeaders();
 
-if (localStorage.getItem(APP_CONFIG.TOKEN)) {
-  SetAuthToken(localStorage.getItem(APP_CONFIG.TOKEN));
-}
+// if (localStorage.getItem(APP_CONFIG.TOKEN)) {
+//   SetAuthToken(localStorage.getItem(APP_CONFIG.TOKEN));
+// }
 
 const queryClient = new QueryClient();
 const AuthenticatedLayout = () => {

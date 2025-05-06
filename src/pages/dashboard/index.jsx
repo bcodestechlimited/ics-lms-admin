@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {MainBtn} from "../../components/button";
 import ChartWrapper from "../../components/chart-wrapper";
@@ -11,6 +11,7 @@ import {
   useGetSkillLevelDistribution,
   useGetTopEnrolledCourses,
 } from "../../hooks/useAnalytics";
+import Loader from "../../components/loader";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -155,7 +156,9 @@ const DashboardPage = () => {
               <div className="mt-5 space-y-8 grid grid-cols-2 gap-8">
                 {/* Courses Created Over Time */}
                 {loadingOverTime ? (
-                  <p>Loading...</p>
+                  <div>
+                    <Loader />
+                  </div>
                 ) : errorOverTime ? (
                   <p>Error loading data</p>
                 ) : (
@@ -168,7 +171,9 @@ const DashboardPage = () => {
 
                 {/* Courses by Category */}
                 {loadingCategory ? (
-                  <p>Loading...</p>
+                  <div>
+                    <Loader />
+                  </div>
                 ) : errorCategory ? (
                   <p>Error loading data</p>
                 ) : (
@@ -181,7 +186,9 @@ const DashboardPage = () => {
 
                 {/* Courses by Skill Level */}
                 {loadingSkill ? (
-                  <p>Loading...</p>
+                  <div>
+                    <Loader />
+                  </div>
                 ) : errorSkill ? (
                   <p>Error loading data</p>
                 ) : (
@@ -194,7 +201,9 @@ const DashboardPage = () => {
 
                 {/* Top 5 Enrolled Courses */}
                 {loadingTop ? (
-                  <p>Loading...</p>
+                  <div>
+                    <Loader />
+                  </div>
                 ) : errorTop ? (
                   <p>Error loading data</p>
                 ) : (
@@ -209,7 +218,9 @@ const DashboardPage = () => {
               <div className="w-full mt-5">
                 {/* Enrollment Counts */}
                 {loadingEnroll ? (
-                  <p>Loading...</p>
+                  <div>
+                    <Loader />
+                  </div>
                 ) : errorEnroll ? (
                   <p>Error loading data</p>
                 ) : (

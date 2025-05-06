@@ -20,7 +20,7 @@ export const useLogin = () => {
       }
       setUser(res.responseObject.user);
       localStorage.setItem(token, res.responseObject.token);
-      queryClient.invalidateQueries({queryKey: ["login"]});
+      // queryClient.invalidateQueries({queryKey: ["login"]});
     },
   });
 };
@@ -44,6 +44,18 @@ export const useSendPasswordResetLink = () => {
 export const useResetUserPassword = () => {
   return useMutation({
     mutationFn: (payload) => authService.resetPasswordService(payload),
+  });
+};
+
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  // const {clearSession} = useAuthStore();
+  return useMutation({
+    mutationFn: () => authService.logout(),
+    onSuccess: () => {
+      // clearSession();
+      queryClient.invalidateQueries({queryKey: ["validate-user"]});
+    },
   });
 };
 

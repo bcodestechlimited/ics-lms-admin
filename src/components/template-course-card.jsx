@@ -24,7 +24,6 @@ export const TemplateCard = ({
       toast.promise(createCourseFromTemplate.mutateAsync(templateId), {
         loading: "Creating course from template",
         success: (response) => {
-          console.log("response", response);
           if (response.success) {
             toast.success("Course created from template successfully");
             navigate(
