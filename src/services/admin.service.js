@@ -43,10 +43,17 @@ class AdminService {
     return data;
   }
 
-  // /users/:id/toggle-status
   async toggleUserAccount(id) {
     const {data} = await axiosInstance.patch(
       this.BASE_URL + `/users/${id}/toggle-status`
+    );
+    return data;
+  }
+
+  async createAdminAccount(payload) {
+    const {data} = await axiosInstance.post(
+      this.BASE_URL + "/create-admin-account",
+      payload
     );
     return data;
   }

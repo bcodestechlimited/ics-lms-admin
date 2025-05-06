@@ -1,4 +1,4 @@
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import adminService from "../services/admin.service";
 
 export const useRequestForCourseExtension = () => {
@@ -38,5 +38,15 @@ export const useGetCertificates = () => {
 export const useAdminToggleStatus = () => {
   return useMutation({
     mutationFn: (id) => adminService.toggleUserAccount(id),
+  });
+};
+
+export const useCreateAdminAccount = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => adminService.createAdminAccount(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["users", "list"]});
+    },
   });
 };

@@ -8,7 +8,10 @@ class AuthService {
 
   async login(payload) {
     try {
-      const {data} = await axiosInstance.post(`${this.baseUrl}/login`, payload);
+      const {data} = await axiosInstance.post(
+        `${this.baseUrl}/login?role=admin`,
+        payload
+      );
       return data;
     } catch (error) {
       throw error;
@@ -17,7 +20,8 @@ class AuthService {
 
   async validateUser() {
     try {
-      const accessToken = localStorage.getItem(token);
+      const accessToken = localStorage.getItem("L&D_ADMIN");
+      console.log({accessToken});
       const {data} = await axiosInstance.get(`${this.baseUrl}/session`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -43,6 +47,10 @@ class AuthService {
       token: payload.token,
     });
     return data;
+  }
+
+  async logout() {
+    await axiosInstance.post("/user/logout");
   }
 }
 
