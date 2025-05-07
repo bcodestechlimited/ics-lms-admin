@@ -7,7 +7,6 @@ import {authService} from "../services/auth.service";
 const token = APP_CONFIG.TOKEN || "L&D_ADMIN";
 
 export const useLogin = () => {
-  const queryClient = useQueryClient();
   const {setUser} = useAuthStore();
 
   return useMutation({
@@ -20,7 +19,6 @@ export const useLogin = () => {
       }
       setUser(res.responseObject.user);
       localStorage.setItem(token, res.responseObject.token);
-      // queryClient.invalidateQueries({queryKey: ["login"]});
     },
   });
 };
@@ -29,9 +27,6 @@ export const useValidateUser = () => {
   return useQuery({
     queryKey: ["validate-user"],
     queryFn: () => authService.validateUser(),
-    // onSuccess: (res) => {
-    //   queryClient.setQueryData(["validate-user"], res);
-    // },
   });
 };
 
