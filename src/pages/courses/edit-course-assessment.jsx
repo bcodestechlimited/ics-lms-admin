@@ -7,6 +7,7 @@ import { PageLoader } from "../../components/loader";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
 import {
+  useGetCourseAssessment,
   // useCourseAssessment,
   useGetCourseById,
   useUpdateCourseAssessment,
@@ -20,15 +21,18 @@ const EditCourseAssessmentPage = () => {
   // const createCourseAssessment = useCourseAssessment();
   const editCourseAssessment = useUpdateCourseAssessment();
 
-  const {data, isLoading} = useGetCourseById({id: courseId});
+  // const {data, isLoading} = useGetCourseById({id: courseId});
+  const {data: courseAssessmentData, isLoading} =
+    useGetCourseAssessment(courseId);
 
-  console.log("data", data);
+  console.log({courseAssessmentData});
 
   useEffect(() => {
-    if (data?.responseObject && data.responseObject.data.course_assessment) {
-      setAssessmentData(data.responseObject.data.course_assessment);
+    const fetched = courseAssessmentData?.responseObject?.data;
+    if (Array.isArray(fetched)) {
+      setAssessmentData(fetched);
     }
-  }, [data]);
+  }, [courseAssessmentData]);
 
   if (isLoading) {
     return <PageLoader />;
@@ -62,46 +66,6 @@ const EditCourseAssessmentPage = () => {
       error: (error) => error.response?.data?.message || "Update failed",
     });
   };
-
-  // const handleSubmitAssessment = () => {
-  //   if (!courseId) {
-  //     toast.error("Course ID is required");
-  //     navigate("/courses/add-course");
-  //     return;
-  //   }
-  //   const payload = {
-  //     courseId,
-  //     questions: assessmentData,
-  //   };
-
-  //   if (data?.responseObject?.data.course_assessment) {
-  //     toast.promise(editCourseAssessment.mutateAsync(payload), {
-  //       loading: "Updating course assessment",
-  //       success: (response) => {
-  //         navigate(
-  //           `/courses/edit-course-retakes?mode=edit_course&course_id=${encodeURIComponent(
-  //             courseId
-  //           )}`
-  //         );
-  //         return "Course Assessment updated";
-  //       },
-  //       error: (error) => error.response?.data?.message || "Update failed",
-  //     });
-  //   } else {
-  //     toast.promise(createCourseAssessment.mutateAsync(payload), {
-  //       loading: "Creating course assessment",
-  //       success: (response) => {
-  //         navigate(
-  //           `/courses/edit-course-retakes?mode=edit_course&course_id=${encodeURIComponent(
-  //             courseId
-  //           )}`
-  //         );
-  //         return "Added Course Assessment";
-  //       },
-  //       error: (error) => error.response?.data?.message || "Creation failed",
-  //     });
-  //   }
-  // };
 
   return (
     <div className="satoshi">

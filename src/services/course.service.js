@@ -230,8 +230,10 @@ class CourseService {
     return data;
   }
 
-  async getCourseAssessmentService() {
-    const {data} = await axiosInstance.get(`${this.baseUrl}/course-assessment`);
+  async getCourseAssessmentService(id) {
+    const {data} = await axiosInstance.get(
+      `${this.baseUrl}/${id}/course-assessment`
+    );
     return data;
   }
 }
