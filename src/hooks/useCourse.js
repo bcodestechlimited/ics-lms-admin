@@ -183,11 +183,11 @@ export const useGetCoursePriceById = (payload) => {
   });
 };
 
-export const useDeleteCourse = () => {
+export const useDeleteCourse = (payload) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload) => courseService.deleteCourse(payload),
+    mutationFn: () => courseService.deleteCourse(payload),
     onSuccess: () => queryClient.invalidateQueries({queryKey: ["courses"]}),
   });
 };

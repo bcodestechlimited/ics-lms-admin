@@ -226,6 +226,9 @@ class CourseService {
   }
 
   async deleteCourse(payload) {
+    if (!payload.id) {
+      throw new Error("Course id is required");
+    }
     const {data} = await axiosInstance.delete(`${this.baseUrl}/${payload.id}`);
     return data;
   }

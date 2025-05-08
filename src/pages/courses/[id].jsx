@@ -29,13 +29,11 @@ const CourseDetails = () => {
     toast.promise(deleteCourse.mutateAsync(), {
       loading: "Deleteing course...",
       success: (res) => {
-        if (!res.success) {
-          return "Error deleting course. Try again!";
-        }
         navigate("/courses");
         return "Course deleted";
       },
-      error: () => {
+      error: (err) => {
+        console.log(err);
         return "An error occured while deleting course.";
       },
     });

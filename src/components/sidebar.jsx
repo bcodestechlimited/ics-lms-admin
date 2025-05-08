@@ -51,11 +51,11 @@ const Sidebar = ({isOpen, toggleSidebar}) => {
       icon: <RouteIcon className={styles.icon} />,
       path: "/plans",
     },
-    {
-      name: "Report",
-      icon: <ClipboardPlusIcon className={styles.icon} />,
-      path: "/reports",
-    },
+    // {
+    //   name: "Report",
+    //   icon: <ClipboardPlusIcon className={styles.icon} />,
+    //   path: "/reports",
+    // },
     {
       name: "Payment",
       icon: <Banknote className={styles.icon} />,
@@ -66,11 +66,11 @@ const Sidebar = ({isOpen, toggleSidebar}) => {
       icon: <TicketPercentIcon className={styles.icon} />,
       path: "/coupons",
     },
-    {
-      name: "Templates",
-      icon: <LayoutTemplateIcon className={styles.icon} />,
-      path: "/templates",
-    },
+    // {
+    //   name: "Templates",
+    //   icon: <LayoutTemplateIcon className={styles.icon} />,
+    //   path: "/templates",
+    // },
     {
       name: "Settings",
       icon: <Settings2Icon className={styles.icon} />,
