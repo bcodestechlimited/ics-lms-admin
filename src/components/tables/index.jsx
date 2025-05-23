@@ -63,8 +63,8 @@ export default function DataTable({
         />
       </div>
 
-      <div className="w-full rounded-md overflow-hidden">
-        <table className="w-full divide-y divide-gray-200">
+      <div className="w-full overflow-x-auto rounded-md overflow-hidden">
+        <table className="w-full min-w-[600px] divide-y divide-gray-200">
           <thead className="bg-gray-200">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
