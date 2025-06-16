@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import useErrorStore from "../../data/stores/errorstore";
 import { apiCall } from "../../data/stores/authstore";
 
+
+// note: remove this code
 const BulkUpload = () => {
 	const { state } = useLocation(),
 		[modal, setModal] = useState(""),
