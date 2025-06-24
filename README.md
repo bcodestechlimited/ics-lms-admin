@@ -18,4 +18,4 @@ This template provides a minimal setup to get React working with CRA.
 - Development Mode: `npm run start`  local server @http://localhost:3000
 - Building: `npm run build`
 
-#### Step 4: 🚀 Deployment
+#### Step 4: 🚀 Deployment 
