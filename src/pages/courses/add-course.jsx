@@ -77,7 +77,6 @@ export const AddCourseMain = ({mode}) => {
       toast.promise(createCourse.mutateAsync(payload), {
         loading: `Creating course...`,
         success: (response) => {
-          console.log(response);
           if (!response?.success) {
             throw new Error("An error occurred while creating course");
           }
@@ -85,12 +84,10 @@ export const AddCourseMain = ({mode}) => {
           return "Course created successfully";
         },
         error: (error) => {
-          console.log("error", error);
           return "An error occured while creating the course. Please try again!";
         },
       });
     } catch (error) {
-      console.log("error", error);
       toast.error("An error occurred while creating course, Try again!");
     }
   };
