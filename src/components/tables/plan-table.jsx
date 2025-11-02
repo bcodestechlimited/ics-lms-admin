@@ -5,9 +5,15 @@ import { Button } from "../ui/button";
 export function PlanTable({
   handleEditPlan,
   handleDeletePlan,
-  plans,
+  data,
   loading,
   isLoading,
+  page,
+  limit,
+  totalPages,
+  onPageChange,
+  onLimitChange,
+  initialSearch = "",
 }) {
   const [globalFilter, setGlobalFilter] = useState("");
 
@@ -66,11 +72,15 @@ export function PlanTable({
   return (
     <>
       <DataTable
-        data={plans}
+        data={data || []}
         columns={columns}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
-        pageSize={5}
+        page={page}
+        limit={limit}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        onLimitChange={onLimitChange}
         isLoading={isLoading}
       />
     </>

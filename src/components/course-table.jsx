@@ -1,10 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useDebounce } from "../hooks/use-debounce";
-import { useCourseStore } from "../store/course-store";
+import {useEffect, useMemo, useState} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {useDebounce} from "../hooks/use-debounce";
+import {useCourseStore} from "../store/course-store";
 import DataTable from "./tables";
 
-export default function CourseTable({courses, isLoading}) {
+export default function CourseTable({
+  courses,
+  isLoading,
+  page, // ✅ from server
+  limit, // ✅ from server
+  totalPages, // ✅ from server
+  totalCount,
+  filteredCount,
+  onPageChange, // ✅ parent fetch trigger
+  onLimitChange, // ✅ parent fetch trigger
+}) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [data, setData] = useState(courses);
   const debouncedFilter = useDebounce(globalFilter, 500);
@@ -12,16 +22,22 @@ export default function CourseTable({courses, isLoading}) {
   const setQueryParams = useCourseStore((state) => state.setQueryParams);
   const navigate = useNavigate();
 
+  // hydrate search input from URL
   useEffect(() => {
-    setQueryParams({search: debouncedFilter});
+    const searchFromUrl = searchParams.get("search") || "";
+    setGlobalFilter(searchFromUrl);
+  }, []); // eslint-disable-line
 
-    if (debouncedFilter) {
-      searchParams.set("search", debouncedFilter);
-    } else {
-      searchParams.delete("search");
-    }
-    setSearchParams(searchParams, {replace: true});
-  }, [debouncedFilter, setQueryParams, searchParams, setSearchParams]);
+  // push search to URL + reset to page 1 (server-side search)
+  useEffect(() => {
+    setQueryParams({search: debouncedFilter, page: 1});
+    const p = new URLSearchParams(searchParams);
+    if (debouncedFilter) p.set("search", debouncedFilter);
+    else p.delete("search");
+    p.set("page", "1");
+    p.set("limit", String(limit));
+    setSearchParams(p, {replace: true});
+  }, [debouncedFilter, limit]); // eslint-disable-line
 
   useEffect(() => {
     setData(courses);
@@ -76,14 +92,13 @@ export default function CourseTable({courses, isLoading}) {
         accessorKey: "action",
         cell: ({row}) => (
           <button
-            variant="secondary"
-            size="sm"
             className="uppercase bg-myblue text-white px-4 py-1 rounded-md"
             onClick={() => {
               const id = row.original._id;
               const title = row.original.title;
-              const encodedTitle = encodeURIComponent(title);
-              navigate(`/courses/${id}?course_title=${encodedTitle}`);
+              navigate(
+                `/courses/${id}?course_title=${encodeURIComponent(title)}`
+              );
             }}
           >
             View
@@ -95,14 +110,18 @@ export default function CourseTable({courses, isLoading}) {
   );
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" id="course-table-top">
       <DataTable
         data={data || []}
         columns={columns}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
-        pageSize={10}
         isLoading={isLoading}
+        page={page}
+        limit={limit}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        onLimitChange={onLimitChange}
       />
     </div>
   );

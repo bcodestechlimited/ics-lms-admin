@@ -1,24 +1,52 @@
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useSearchParams} from "react-router-dom";
 import DataTable from ".";
+import {useDebounce} from "../../hooks/use-debounce";
 
-export function CertificateTable({data}) {
-  const [globalFilter, setGlobalFilter] = useState("");
+export function CertificateTable({
+  data,
+  page,
+  limit,
+  totalPages,
+  onPageChange,
+  onLimitChange,
+  initialSearch = "",
+}) {
+  const [globalFilter, setGlobalFilter] = useState(initialSearch);
+  const debounced = useDebounce(globalFilter, 500);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const certificates = useMemo(() => {
-    return (
-      data?.responseObject?.data?.map((item) => ({
-        id: item._id,
-        firstName: item.userId?.firstName,
-        lastName: item.userId?.lastName,
-        email: item.userId?.email,
-        course_title: item.courseId?.title,
-        completedAt: item.issuedAt,
-        certificateIssued: true,
-        path: item.path,
-        fileName: item.fileName,
-      })) || []
-    );
+    return (data || []).map((u) => ({
+      id: u._id,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      email: u.email,
+      certificateIssued: (u.courseEnrollments?.length || 0) > 0,
+      completedAt: u.createdAt,
+    }));
   }, [data]);
+
+  useEffect(() => {
+    const p = new URLSearchParams(searchParams);
+    if (debounced) p.set("search", debounced);
+    else p.delete("search");
+    p.set("limit", String(limit));
+    setSearchParams(p, {replace: true});
+  }, [debounced, limit, searchParams, setSearchParams]);
+
+  const prevSearchRef = useRef(initialSearch);
+  useEffect(() => {
+    if (debounced === prevSearchRef.current) return;
+    prevSearchRef.current = debounced;
+
+    const p = new URLSearchParams(window.location.search);
+    if (debounced) p.set("search", debounced);
+    else p.delete("search");
+    p.set("page", "1");
+    p.set("limit", String(limit));
+    setSearchParams(p, {replace: true});
+  }, [debounced, limit, setSearchParams]);
 
   const columns = useMemo(
     () => [
@@ -64,7 +92,11 @@ export function CertificateTable({data}) {
         columns={columns}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
-        pageSize={10}
+        page={page}
+        limit={limit}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        onLimitChange={onLimitChange}
       />
     </div>
   );

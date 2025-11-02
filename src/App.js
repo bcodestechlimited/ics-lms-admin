@@ -44,11 +44,9 @@ import TemplatesPage from "./pages/templates";
 import UsersPage from "./pages/users";
 import Login from "./screens/home";
 
-SetDefaultHeaders();
+// SetDefaultHeaders();
 
-// if (localStorage.getItem(APP_CONFIG.TOKEN)) {
-//   SetAuthToken(localStorage.getItem(APP_CONFIG.TOKEN));
-// }
+
 
 const queryClient = new QueryClient();
 const AuthenticatedLayout = () => {

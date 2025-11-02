@@ -2,9 +2,10 @@ import {axiosInstance} from "../lib/axios";
 
 class UserService {
   BASE_URL = "/user";
-  async getAllStudentsService() {
+  async getAllStudentsService(params) {
     try {
-      const {data} = await axiosInstance.get(this.BASE_URL + "/students");
+      const url = `${this.BASE_URL}/students?${params.toString()}`;
+      const {data} = await axiosInstance.get(url);
       return data;
     } catch (error) {
       throw error;

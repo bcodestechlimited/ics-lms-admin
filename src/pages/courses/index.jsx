@@ -1,37 +1,94 @@
-import { Button } from "@headlessui/react";
-import React, { useState } from "react";
+import {Button} from "@headlessui/react";
+import {useEffect, useState} from "react";
 import CourseTable from "../../components/course-table";
 import {
   AssignCourseModal,
   CourseAssignedModal,
 } from "../../components/modals/assign-course-modal";
 import Shell from "../../components/shell";
-import { useGetCourse } from "../../hooks/useCourse";
-import { ContentWriteup } from "./[id]";
+import {useGetCourse} from "../../hooks/useCourse";
+import {ContentWriteup} from "./[id]";
+import {useCourseStore} from "../../store/course-store";
+import {useSearchParams} from "react-router-dom";
+import {DEFAULT_LIMIT} from "../../helpers/service.helpers";
 
 const CoursesPage = () => {
   const [modal, setModal] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const setQueryParams = useCourseStore((s) => s.setQueryParams);
+
+  const pageFromUrl = Number(searchParams.get("page") || 1);
+  const limitFromUrl = Number(searchParams.get("limit") || DEFAULT_LIMIT);
+  const searchFromUrl = searchParams.get("search") || "";
+
+  useEffect(() => {
+    setQueryParams({
+      page: pageFromUrl,
+      limit: limitFromUrl,
+      search: searchFromUrl,
+    });
+  }, [pageFromUrl, limitFromUrl, searchFromUrl, setQueryParams]);
+
+  const {data, isLoading} = useGetCourse();
+  const courses = !isLoading && data?.data?.courses;
+  const pagination = data?.data?.pagination ?? {
+    totalCount: 0,
+    filteredCount: 0,
+    totalPages: 0,
+    page: pageFromUrl,
+    limit: limitFromUrl,
+  };
+
+  const handlePageChange = (nextPage) => {
+    const page = Math.max(1, Math.min(nextPage, pagination.totalPages || 1));
+    searchParams.set("page", String(page));
+    searchParams.set("limit", String(pagination.limit || DEFAULT_LIMIT));
+    // Keep existing search param stable
+    if (searchFromUrl) searchParams.set("search", searchFromUrl);
+    setSearchParams(searchParams, {replace: true});
+    setQueryParams({page});
+    // Optional UX: scroll to table top on page change
+    window.scrollTo({top: 0, behavior: "smooth"});
+  };
+
+  const handleLimitChange = (nextLimit) => {
+    const limit =
+      Number.isFinite(nextLimit) && nextLimit > 0 ? nextLimit : DEFAULT_LIMIT;
+    // Reset to page 1 whenever limit changes to avoid empty pages
+    searchParams.set("page", "1");
+    searchParams.set("limit", String(limit));
+    if (searchFromUrl) searchParams.set("search", searchFromUrl);
+    setSearchParams(searchParams, {replace: true});
+    setQueryParams({page: 1, limit});
+    window.scrollTo({top: 0, behavior: "smooth"});
+  };
+
   const handleClose = () => {
     setModal("");
   };
-
   const handleAssignModalSuccess = () => {
     handleClose();
     setModal("course-assigned-success-modal");
   };
-
   const handleShowCourseAssignedModal = () => {
     setModal("");
   };
-
-  const {data, isLoading} = useGetCourse();
-  const courses = !isLoading && data?.responseObject?.response;
 
   return (
     <div>
       <Shell pageHeader="View all Courses" pageTitle="Courses">
         <div className="">
-          <CourseTable courses={courses?.docs || []} isLoading={isLoading} />
+          <CourseTable
+            courses={courses || []}
+            isLoading={isLoading}
+            page={pagination.page}
+            limit={pagination.limit || limitFromUrl}
+            totalPages={pagination.totalPages || 0}
+            totalCount={pagination.totalCount || 0}
+            filteredCount={pagination.filteredCount || 0}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+          />
         </div>
       </Shell>
       {/* modals */}
@@ -85,14 +142,6 @@ export const CourseCard = ({Img, title, desc, onClick, modal, setModal}) => {
           >
             View
           </Button>
-          {/* <Button
-            css={`cursor-pointer`}
-            onClick={() => {
-              setModal("assign-course-modal");
-            }}
-          >
-            Assign
-          </Button> */}
         </div>
       </div>
     </>

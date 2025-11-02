@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import DataTable from ".";
-import { Button } from "../button";
-import { useNavigate } from "react-router-dom";
+import {Button} from "../button";
+import {useNavigate, useSearchParams} from "react-router-dom";
+import {useDebounce} from "../../hooks/use-debounce";
 
 const styles = {
   box: {
@@ -33,12 +34,42 @@ function getCouponStatus(status) {
   }
 }
 
-
-
-const CouponTable = ({defaultData, isLoading}) => {
-  const [data] = useState(defaultData);
-  const [globalFilter, setGlobalFilter] = useState("");
+const CouponTable = ({
+  data,
+  page,
+  limit,
+  totalPages,
+  totalCount,
+  filteredCount,
+  onPageChange,
+  onLimitChange,
+  initialSearch = "",
+}) => {
+  const [globalFilter, setGlobalFilter] = useState(initialSearch);
+  const debounced = useDebounce(globalFilter, 500);
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const p = new URLSearchParams(searchParams);
+    if (debounced) p.set("search", debounced);
+    else p.delete("search");
+    p.set("limit", String(limit));
+    setSearchParams(p, {replace: true});
+  }, [debounced, limit, searchParams, setSearchParams]);
+
+  const prevSearchRef = useRef(initialSearch);
+  useEffect(() => {
+    if (debounced === prevSearchRef.current) return;
+    prevSearchRef.current = debounced;
+
+    const p = new URLSearchParams(window.location.search);
+    if (debounced) p.set("search", debounced);
+    else p.delete("search");
+    p.set("page", "1");
+    p.set("limit", String(limit));
+    setSearchParams(p, {replace: true});
+  }, [debounced, limit, setSearchParams]);
 
   const columns = useMemo(
     () => [
@@ -85,10 +116,11 @@ const CouponTable = ({defaultData, isLoading}) => {
         header: "Action",
         accessorKey: "action",
         cell: ({row, getValue}) => {
+          console.log("row", row.original);
           return (
             <Button
               onClick={() => {
-                navigate(`/coupons/${row.original.id}`);
+                navigate(`/coupons/${row.original._id}`);
                 // setModal("view-status-modal");
               }}
               variant="secondary"
@@ -111,12 +143,13 @@ const CouponTable = ({defaultData, isLoading}) => {
           columns={columns}
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
-          pageSize={5}
-          isLoading={isLoading}
+          page={page}
+          limit={limit}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          onLimitChange={onLimitChange}
         />
       </div>
-
-      {/* {modal === "open-view-coupon-modal" && <></>} */}
     </div>
   );
 };

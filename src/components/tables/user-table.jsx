@@ -1,11 +1,45 @@
-import {useMemo, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import DataTable from ".";
 import {Button} from "../ui/button";
+import {useDebounce} from "../../hooks/use-debounce";
 
-export function StudentsTable({data}) {
-  const [globalFilter, setGlobalFilter] = useState("");
+export function StudentsTable({
+  data,
+  page,
+  limit,
+  totalPages,
+  totalCount,
+  filteredCount,
+  onPageChange,
+  onLimitChange,
+  initialSearch = "",
+}) {
+  const [globalFilter, setGlobalFilter] = useState(initialSearch);
+  const debounced = useDebounce(globalFilter, 500);
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const p = new URLSearchParams(searchParams);
+    if (debounced) p.set("search", debounced);
+    else p.delete("search");
+    p.set("limit", String(limit));
+    setSearchParams(p, {replace: true});
+  }, [debounced, limit, searchParams, setSearchParams]);
+
+  const prevSearchRef = useRef(initialSearch);
+  useEffect(() => {
+    if (debounced === prevSearchRef.current) return;
+    prevSearchRef.current = debounced;
+
+    const p = new URLSearchParams(window.location.search);
+    if (debounced) p.set("search", debounced);
+    else p.delete("search");
+    p.set("page", "1");
+    p.set("limit", String(limit));
+    setSearchParams(p, {replace: true});
+  }, [debounced, limit, setSearchParams]);
 
   const columns = useMemo(
     () => [
@@ -57,14 +91,16 @@ export function StudentsTable({data}) {
     [navigate]
   );
   return (
-    <>
-      <DataTable
-        data={data || []}
-        columns={columns}
-        globalFilter={globalFilter}
-        setGlobalFilter={setGlobalFilter}
-        pageSize={20}
-      />
-    </>
+    <DataTable
+      data={data || []}
+      columns={columns}
+      globalFilter={globalFilter}
+      setGlobalFilter={setGlobalFilter}
+      page={page}
+      limit={limit}
+      totalPages={totalPages}
+      onPageChange={onPageChange}
+      onLimitChange={onLimitChange}
+    />
   );
 }

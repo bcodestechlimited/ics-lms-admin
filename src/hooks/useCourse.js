@@ -134,8 +134,11 @@ export const useUpdateCoursePricing = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload) => courseService.updateCoursePricingService(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["course-pricing"] });
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({queryKey: ["course", variables.courseId]});
+      queryClient.invalidateQueries({
+        queryKey: ["course-pricing", variables.courseId],
+      });
     },
   });
 };
@@ -202,13 +205,3 @@ export const useGetCourseAssessment = (id) => {
 
 
 
-// export const useBulkInvitationForOnboarding = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     queryKey: ["bulk-invitation-for-onboarding"],
-//     mutationFn: (payload) => userService.uploadStaffInfoForOnboarding(payload),
-//     onSuccess: () =>
-//       queryClient.invalidateQueries({queryKey: ["get-all-students"]}),
-//   });
-// };

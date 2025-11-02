@@ -12,7 +12,7 @@ export const InviteStaffInBulkModal = ({
   setState,
 }) => {
   const {data, isLoading} = useGetPublishedCourse();
-  const courses = !isLoading && data?.responseObject?.docs;
+  const courses = !isLoading && data?.data?.courses;
 
   const handleStaffTypeChange = (isIcsStaff) => {
     setState((prev) => ({

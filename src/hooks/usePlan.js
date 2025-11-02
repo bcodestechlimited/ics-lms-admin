@@ -14,10 +14,19 @@ export const useCreatePlan = () => {
   });
 };
 
-export const useGetAllPlans = () => {
+export const useGetAllPlans = ({page = 1, limit = 20, search = ""} = {}) => {
   return useQuery({
     queryKey: ["get-all-plans"],
-    queryFn: () => planService.getAllPlansService(),
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.set("page", page);
+      params.set("limit", limit);
+      if (search) params.set("search", search);
+
+      const {data} = await planService.getAllPlansService(params);
+      return data;
+    },
+    keepPreviousData: true,
   });
 };
 

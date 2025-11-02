@@ -1,22 +1,61 @@
 import {FileImage, Info, UploadCloud, X} from "lucide-react";
 import {useRef, useState} from "react";
+import {useSearchParams} from "react-router-dom";
 import {toast} from "sonner";
 import Loader from "../../components/loader";
 import Shell from "../../components/shell";
 import {CertificateTable} from "../../components/tables/certificate-table";
 import {Button} from "../../components/ui/button";
+import {DEFAULT_LIMIT} from "../../helpers/service.helpers";
 import {
   useGetCertificates,
   useUploadCertificateTemplate,
 } from "../../hooks/use-admin";
 
 const CertificatesPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageFromUrl = Number(searchParams.get("page") || 1);
+  const limitFromUrl = Number(searchParams.get("limit") || DEFAULT_LIMIT);
+  const searchFromUrl = searchParams.get("search") || "";
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
   const uploadCourseCertificate = useUploadCertificateTemplate();
-  const {isLoading, data: issuedCertificatesData} = useGetCertificates();
+
+  const {isLoading, data: issuedCertificatesData} = useGetCertificates({
+    page: pageFromUrl,
+    limit: limitFromUrl,
+    search: searchFromUrl,
+  });
+
+  const api = issuedCertificatesData;
+  const rows = api?.users ?? [];
+  const pagination = api?.pagination ?? {
+    totalCount: 0,
+    filteredCount: 0,
+    totalPages: 1,
+    page: pageFromUrl,
+    limit: limitFromUrl,
+  };
+
+  const setUrl = (updates = {}) => {
+    const p = new URLSearchParams(searchParams);
+    if (updates.page != null) p.set("page", String(updates.page));
+    if (updates.limit != null) p.set("limit", String(updates.limit));
+    setSearchParams(p, {replace: true});
+    window.scrollTo({top: 0, behavior: "smooth"});
+  };
+
+  const handlePageChange = (nextPage) => {
+    const safe = Math.max(1, Math.min(nextPage, pagination.totalPages || 1));
+    setUrl({page: safe, limit: pagination.limit});
+  };
+
+  const handleLimitChange = (nextLimit) => {
+    const limit = Number(nextLimit) > 0 ? Number(nextLimit) : DEFAULT_LIMIT;
+    setUrl({page: 1, limit});
+  };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0];
@@ -88,7 +127,16 @@ const CertificatesPage = () => {
             <Loader />
           </div>
         ) : (
-          !isLoading && <CertificateTable data={issuedCertificatesData} />
+          !isLoading && (
+            <CertificateTable
+              data={rows}
+              page={pagination.page}
+              limit={pagination.limit}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+            />
+          )
         )}
 
         {/* idea: in the future it is possible that this feature is required */}

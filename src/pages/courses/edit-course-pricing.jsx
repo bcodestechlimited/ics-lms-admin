@@ -22,14 +22,12 @@ const EditCoursePricingPage = () => {
   const updateCoursePricing = useUpdateCoursePricing();
 
   useEffect(() => {
-    if (
-      getCourse?.responseObject &&
-      getCourse?.responseObject?.data?.course_price
-    ) {
+    const existingPrice =
+      getCourse?.responseObject?.data?.course_price?.coursePricing;
+    if (typeof existingPrice === "number") {
       setFormData((prev) => ({
         ...prev,
-        coursePricing:
-          getCourse?.responseObject?.data?.course_price?.coursePricing,
+        coursePricing: String(existingPrice),
       }));
     }
   }, [getCourse]);
@@ -39,16 +37,22 @@ const EditCoursePricingPage = () => {
   }
 
   const handleUpdate = async (field) => {
+    if (!courseId) {
+      toast.error("Course ID is required.");
+      return;
+    }
+
+    const numericPrice = Number(formData.coursePricing);
+    if (!Number.isFinite(numericPrice) || numericPrice < 0) {
+      toast.error("Please enter a valid price (0 or higher).");
+      return;
+    }
+
     const payload = {
       courseId,
       course_price_id: getCourse?.responseObject?.data?.course_price?._id,
-      coursePrice: Number(parseInt(formData.coursePricing, 10)),
+      coursePrice: numericPrice,
     };
-
-    if (!payload.course_price_id) {
-      toast.error("Course price not found");
-      return;
-    }
 
     toast.promise(updateCoursePricing.mutateAsync(payload), {
       loading: `Updating course ${field}`,

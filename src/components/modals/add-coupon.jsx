@@ -78,8 +78,6 @@ const AddCouponModal = ({setState, courseId, courses, refetch}) => {
     }
   };
 
-  console.log({formState});
-
   return (
     <div>
       <ModalContainer>
@@ -122,15 +120,13 @@ const AddCouponModal = ({setState, courseId, courses, refetch}) => {
                     Select Course
                   </option>
                   {!isLoading &&
-                    coursesData?.responseObject?.response?.docs.map(
-                      (course) => {
-                        return (
-                          <option key={course._id} value={course._id}>
-                            {course.title}
-                          </option>
-                        );
-                      }
-                    )}
+                    coursesData?.data?.courses.map((course) => {
+                      return (
+                        <option key={course._id} value={course._id}>
+                          {course.title}
+                        </option>
+                      );
+                    })}
                 </Select>
                 <ChevronDownIcon
                   className="group pointer-events-none absolute top-4 right-2.5 size-4 fill-white/60 h-4 w-4"

@@ -1,6 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import useCouponStore from "../data/stores/coupon.store";
-import { couponService } from "../services/coupon.service";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {couponService} from "../services/coupon.service";
 
 export const useCreateCoupon = () => {
   const queryClient = useQueryClient();
@@ -15,26 +14,40 @@ export const useCreateCoupon = () => {
   });
 };
 
-export const useGetCoupon = () => {
-  const queryOptions = useCouponStore((state) => state.queryOptions);
-
+export const useGetActiveCoupons = ({
+  page = 1,
+  limit = 20,
+  search = "",
+} = {}) => {
   return useQuery({
-    queryKey: ["get-coupons", queryOptions],
-    queryFn: () => couponService.getAllCoupons(queryOptions),
+    queryKey: ["get-active-coupon", {page, limit, search}],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.set("page", page);
+      params.set("limit", limit);
+      if (search) params.set("search", search);
+
+      const {data} = await couponService.getActiveCoupons(params);
+      return data;
+    },
   });
 };
 
-export const useGetActiveCoupons = () => {
+export const useGetInactiveCoupons = ({
+  page = 1,
+  limit = 20,
+  search = "",
+} = {}) => {
   return useQuery({
-    queryKey: ["get-active-coupon"],
-    queryFn: () => couponService.getActiveCoupons(),
-  });
-};
-
-export const useGetInactiveCoupons = () => {
-  return useQuery({
-    queryFn: () => couponService.getInactiveCoupons(),
-    queryKey: ["get-inactive-coupons"],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.set("page", page);
+      params.set("limit", limit);
+      if (search) params.set("search", search);
+      const {data} = await couponService.getInactiveCoupons(params);
+      return data;
+    },
+    queryKey: ["get-inactive-coupons", {page, limit, search}],
   });
 };
 

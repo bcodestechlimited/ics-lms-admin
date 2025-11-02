@@ -38,8 +38,10 @@ class AdminService {
     return data;
   }
 
-  async getIssuedCertificatesService() {
-    const {data} = await axiosInstance.get("/certificates");
+  async getIssuedCertificatesService(params) {
+    const {data} = await axiosInstance.get(
+      `/certificates?${params.toString()}`
+    );
     return data;
   }
 

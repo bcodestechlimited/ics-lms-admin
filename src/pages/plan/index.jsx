@@ -10,13 +10,30 @@ import {
   useEditAPlan,
   useGetAllPlans,
 } from "../../hooks/usePlan";
+import {useSearchParams} from "react-router-dom";
+import {DEFAULT_LIMIT} from "../../helpers/service.helpers";
 
 const PlanPage = () => {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const {data, isLoading} = useGetAllPlans();
-  const plans = (!isLoading && data?.responseObject?.data) || [];
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageFromUrl = Number(searchParams.get("page") || 1);
+  const limitFromUrl = Number(searchParams.get("limit") || DEFAULT_LIMIT);
+  const searchFromUrl = searchParams.get("search") || "";
+  const {data, isLoading} = useGetAllPlans({
+    page: pageFromUrl,
+    limit: limitFromUrl,
+    search: searchFromUrl,
+  });
+  const plans = data?.plans || [];
+  const pagination = data?.pagination || {
+    totalCount: 0,
+    filteredCount: 0,
+    totalPages: 1,
+    page: pageFromUrl,
+    limit: limitFromUrl,
+  };
 
   const deletePlanMutation = useDeleteAPlan();
   const editPlanMutation = useEditAPlan();
@@ -73,6 +90,28 @@ const PlanPage = () => {
     }
   };
 
+  const setUrl = (updates = {}) => {
+    const p = new URLSearchParams(searchParams);
+    if (updates.page != null) p.set("page", String(updates.page));
+    if (updates.limit != null) p.set("limit", String(updates.limit));
+    if (updates.search != null) {
+      if (updates.search) p.set("search", updates.search);
+      else p.delete("search");
+    }
+    setSearchParams(p, {replace: true});
+    window.scrollTo({top: 0, behavior: "smooth"});
+  };
+
+  const handlePageChange = (nextPage) => {
+    const safe = Math.max(1, Math.min(nextPage, pagination.totalPages || 1));
+    setUrl({page: safe, limit: pagination.limit});
+  };
+
+  const handleLimitChange = (nextLimit) => {
+    const limit = Number(nextLimit) > 0 ? Number(nextLimit) : DEFAULT_LIMIT;
+    setUrl({page: 1, limit});
+  };
+
   return (
     <Shell pageHeader={"Create and View Plans"} pageTitle={"Plans"}>
       <div>
@@ -92,9 +131,13 @@ const PlanPage = () => {
             <PlanTable
               handleEditPlan={handleEditPlan}
               handleDeletePlan={handleDeletePlan}
-              plans={plans}
-              loading={loading}
-              isLoading={isLoading}
+              data={plans}
+              totalPages={pagination.totalPages}
+              totalCount={pagination.totalCount}
+              filteredCount={pagination.filteredCount}
+              onPageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              initialSearch={searchFromUrl}
             />
           )}
 

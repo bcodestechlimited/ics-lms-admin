@@ -28,10 +28,23 @@ export const useUploadCertificateTemplate = () => {
   });
 };
 
-export const useGetCertificates = () => {
+export const useGetCertificates = ({
+  page = 1,
+  limit = 20,
+  search = "",
+} = {}) => {
   return useQuery({
-    queryKey: ["get-certificates"],
-    queryFn: () => adminService.getIssuedCertificatesService(),
+    queryKey: ["get-certificates", {page, limit, search}],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.set("page", page);
+      params.set("limit", limit);
+      if (search) params.set("search", search);
+
+      const {data} = await adminService.getIssuedCertificatesService(params);
+      return data;
+    },
+    keepPreviousData: true,
   });
 };
 

@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {useSearchParams} from "react-router-dom";
 import {toast} from "sonner";
 import Loader from "../../components/loader";
 import {InviteStaffInBulkModal} from "../../components/modals/invite-staff-bulk-modal";
@@ -6,12 +7,12 @@ import Shell from "../../components/shell";
 import {CourseExtensionRequestsTable} from "../../components/tables/extension-request-table";
 import {StudentsTable} from "../../components/tables/user-table";
 import {Button} from "../../components/ui/button";
+import {DEFAULT_LIMIT} from "../../helpers/service.helpers";
 import {useRequestForCourseExtension} from "../../hooks/use-admin";
 import {useAssignCoursesToStaffs} from "../../hooks/useCourse";
 import {useGetAllStudents} from "../../hooks/useUser";
 
 const UsersPage = () => {
-  const {data, isLoading, refetch} = useGetAllStudents();
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -21,7 +22,26 @@ const UsersPage = () => {
     isIcsStaff: true,
     durationDays: 1,
   });
-  const students = !isLoading && data?.responseObject?.data;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pageFromUrl = Number(searchParams.get("page") || 1);
+  const limitFromUrl = Number(searchParams.get("limit") || DEFAULT_LIMIT);
+  const searchFromUrl = searchParams.get("search") || "";
+
+  const {data, isLoading, refetch} = useGetAllStudents({
+    page: pageFromUrl,
+    limit: limitFromUrl,
+    search: searchFromUrl,
+  });
+
+  const users = data?.users || [];
+  const pagination = data?.pagination || {
+    totalCount: 0,
+    filteredCount: 0,
+    totalPages: 1,
+    page: pageFromUrl,
+    limit: limitFromUrl,
+  };
+
   const {
     data: extensionRequestData,
     isLoading: extensionRequestLoading,
@@ -35,6 +55,28 @@ const UsersPage = () => {
     } else {
       toast.error("Please upload a valid Excel file");
     }
+  };
+
+  const setUrl = (updates = {}) => {
+    const p = new URLSearchParams(searchParams);
+    if (updates.page != null) p.set("page", String(updates.page));
+    if (updates.limit != null) p.set("limit", String(updates.limit));
+    if (updates.search != null) {
+      if (updates.search) p.set("search", updates.search);
+      else p.delete("search");
+    }
+    setSearchParams(p, {replace: true});
+    window.scrollTo({top: 0, behavior: "smooth"});
+  };
+
+  const handlePageChange = (nextPage) => {
+    const safe = Math.max(1, Math.min(nextPage, pagination.totalPages || 1));
+    setUrl({page: safe, limit: pagination.limit});
+  };
+
+  const handleLimitChange = (nextLimit) => {
+    const limit = Number(nextLimit) > 0 ? Number(nextLimit) : DEFAULT_LIMIT;
+    setUrl({page: 1, limit});
   };
 
   const handleUpload = async () => {
@@ -58,7 +100,6 @@ const UsersPage = () => {
       toast.promise(assignCoursesToStaffs.mutateAsync(formData), {
         loading: "Uploading...",
         success: (response) => {
-          console.log("response", response);
           if (response.success) {
             toast.success(response.message);
             refetch();
@@ -96,7 +137,21 @@ const UsersPage = () => {
       )}
 
       <div className="">
-        {isLoading ? <Loader /> : <StudentsTable data={students} />}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <StudentsTable
+            data={users}
+            page={pagination.page}
+            limit={pagination.limit}
+            totalPages={pagination.totalPages}
+            totalCount={pagination.totalCount}
+            filteredCount={pagination.filteredCount}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            initialSearch={searchFromUrl}
+          />
+        )}
       </div>
 
       <div className="mt-12">

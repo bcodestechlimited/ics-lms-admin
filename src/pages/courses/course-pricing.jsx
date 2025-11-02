@@ -8,7 +8,7 @@ import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
 import AddCouponModal from "../../components/modals/add-coupon";
 import { Button } from "../../components/ui/button";
-import { useGetCoupon } from "../../hooks/useCoupon";
+// import { useGetCoupon } from "../../hooks/useCoupon";
 import {
   useCreateCoursePricing,
   usePublishCourse,
@@ -21,12 +21,12 @@ const CoursePricingPage = () => {
   const courseId = getSearch.get("course_id");
   const navigate = useNavigate();
   const createCoursePricing = useCreateCoursePricing();
-  const {data, isLoading} = useGetCoupon();
+  // const {data, isLoading} = useGetCoupon();
   const publishCourseHook = usePublishCourse(courseId);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
+  // if (isLoading) {
+  //   return <PageLoader />;
+  // }
 
   const handleCoursePricingSubmit = () => {
     try {
@@ -111,13 +111,13 @@ const CoursePricingPage = () => {
         </div>
       </MainContainer>
 
-      {modal === "open-coupon-modal" && (
+      {/* {modal === "open-coupon-modal" && (
         <AddCouponModal
           setState={setModal}
           courseId={courseId}
           courses={data.data.docs}
         />
-      )}
+      )} */}
     </div>
   );
 };
