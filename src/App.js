@@ -1,18 +1,17 @@
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import {useState} from "react";
-import {Provider} from "react-redux";
+import { useState } from "react";
+import { Provider } from "react-redux";
 import {
   createBrowserRouter,
   Navigate,
   Outlet,
   RouterProvider,
 } from "react-router-dom";
-import {Tooltip} from "react-tooltip";
-import {Toaster} from "sonner";
+import { Tooltip } from "react-tooltip";
+import { Toaster } from "sonner";
 import "./App.css";
 import Sidebar from "./components/sidebar";
-import {SetDefaultHeaders} from "./data/Config";
 import store from "./data/Store";
 import AuthGuard from "./layouts/auth-guard.layout";
 import ForgotPasswordPage from "./pages/auth/forgot-password";
@@ -39,14 +38,10 @@ import PaymentsPage from "./pages/payments";
 import PlanPage from "./pages/plan";
 import ReportsPage from "./pages/reports";
 import SettingsPage from "./pages/settings";
-import {MainStudentById} from "./pages/student/[id]";
+import { MainStudentById } from "./pages/student/[id]";
 import TemplatesPage from "./pages/templates";
 import UsersPage from "./pages/users";
 import Login from "./screens/home";
-
-// SetDefaultHeaders();
-
-
 
 const queryClient = new QueryClient();
 const AuthenticatedLayout = () => {

@@ -1,8 +1,8 @@
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import DataTable from ".";
-import {Button} from "../ui/button";
-import {useDebounce} from "../../hooks/use-debounce";
+import { useDebounce } from "../../hooks/use-debounce";
+import { Button } from "../ui/button";
 
 export function StudentsTable({
   data,
@@ -14,6 +14,8 @@ export function StudentsTable({
   onPageChange,
   onLimitChange,
   initialSearch = "",
+  handleEmailVerification,
+  verifyingEmailId,
 }) {
   const [globalFilter, setGlobalFilter] = useState(initialSearch);
   const debounced = useDebounce(globalFilter, 500);
@@ -25,7 +27,7 @@ export function StudentsTable({
     if (debounced) p.set("search", debounced);
     else p.delete("search");
     p.set("limit", String(limit));
-    setSearchParams(p, {replace: true});
+    setSearchParams(p, { replace: true });
   }, [debounced, limit, searchParams, setSearchParams]);
 
   const prevSearchRef = useRef(initialSearch);
@@ -38,7 +40,7 @@ export function StudentsTable({
     else p.delete("search");
     p.set("page", "1");
     p.set("limit", String(limit));
-    setSearchParams(p, {replace: true});
+    setSearchParams(p, { replace: true });
   }, [debounced, limit, setSearchParams]);
 
   const columns = useMemo(
@@ -58,6 +60,13 @@ export function StudentsTable({
         cell: (info) => info.getValue(),
       },
       {
+        header: "Email Verified",
+        cell: (info) => {
+          const student = info.row.original;
+          return student.isEmailVerified ? "Yes" : "No";
+        },
+      },
+      {
         header: "Courses Enrolled",
         cell: (info) => {
           const student = info.row.original;
@@ -69,6 +78,22 @@ export function StudentsTable({
         accessorKey: "createdAt",
         cell: (info) => {
           return new Date(info.row.original.createdAt).toLocaleDateString();
+        },
+      },
+      {
+        header: "Verify Email",
+        cell: (info) => {
+          const student = info.row.original;
+          const isVerifying = verifyingEmailId === student._id;
+
+          return (
+            <Button
+              disabled={student.isEmailVerified || isVerifying}
+              onClick={() => handleEmailVerification(student._id)}
+            >
+              {isVerifying ? "Verifying..." : "Verify Email"}
+            </Button>
+          );
         },
       },
       {
@@ -88,7 +113,7 @@ export function StudentsTable({
         },
       },
     ],
-    [navigate]
+    [navigate, handleEmailVerification, verifyingEmailId],
   );
   return (
     <DataTable

@@ -8,7 +8,10 @@ export const useCreateCoupon = () => {
     mutationFn: (payload) => couponService.createCoupon(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["create-coupon", "get-coupon-analytics"],
+        queryKey: ["get-coupon-analytics"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["get-active-coupon"],
       });
     },
   });

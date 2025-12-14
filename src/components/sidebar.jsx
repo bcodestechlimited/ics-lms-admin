@@ -4,24 +4,21 @@ import {
   BookOpenIcon,
   ChevronLeft,
   ChevronRight,
-  ClipboardPlusIcon,
   LayoutDashboardIcon,
-  LayoutTemplateIcon,
   LogOutIcon,
   RouteIcon,
   Settings2Icon,
   TicketPercentIcon,
   UsersIcon,
 } from "lucide-react";
-import React from "react";
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import {APP_CONFIG} from "../lib/config";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { APP_CONFIG } from "../lib/config";
 
 const styles = {
   icon: `w-4 h-4 `,
 };
 
-const Sidebar = ({isOpen, toggleSidebar}) => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -105,7 +102,7 @@ const Sidebar = ({isOpen, toggleSidebar}) => {
             key={item.path}
             to={item.path}
             className={`
-              flex items-center p-3 hover:bg-gray-100 
+              flex items-center p-3 hover:bg-gray-100
               ${
                 location.pathname === item.path
                   ? "bg-blue-50 text-blue-600"

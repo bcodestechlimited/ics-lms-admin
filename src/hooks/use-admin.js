@@ -1,4 +1,4 @@
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import adminService from "../services/admin.service";
 
 export const useRequestForCourseExtension = () => {
@@ -34,14 +34,14 @@ export const useGetCertificates = ({
   search = "",
 } = {}) => {
   return useQuery({
-    queryKey: ["get-certificates", {page, limit, search}],
+    queryKey: ["get-certificates", { page, limit, search }],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.set("page", page);
       params.set("limit", limit);
       if (search) params.set("search", search);
 
-      const {data} = await adminService.getIssuedCertificatesService(params);
+      const { data } = await adminService.getIssuedCertificatesService(params);
       return data;
     },
     keepPreviousData: true,
@@ -59,7 +59,23 @@ export const useCreateAdminAccount = () => {
   return useMutation({
     mutationFn: (payload) => adminService.createAdminAccount(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["users", "list"]});
+      queryClient.invalidateQueries({ queryKey: ["users", "list"] });
+    },
+  });
+};
+
+export const useVerifyEmail = () => {
+  return useMutation({
+    mutationFn: (id) => adminService.verifyEmail(id),
+  });
+};
+
+export const useBulkVerifyEmails = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => adminService.bulkVerifyEmails(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users", "list"] });
     },
   });
 };

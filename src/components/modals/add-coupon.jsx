@@ -61,7 +61,7 @@ const AddCouponModal = ({setState, courseId, courses, refetch}) => {
           if (response.success) {
             handleClose();
             openSuccessModal();
-            if (refetch) refetch();
+            refetch();
             return "Coupon created successfully";
           }
 

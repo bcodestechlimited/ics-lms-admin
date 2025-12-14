@@ -1,12 +1,12 @@
-import {FileImage, Info, UploadCloud, X} from "lucide-react";
-import {useRef, useState} from "react";
-import {useSearchParams} from "react-router-dom";
-import {toast} from "sonner";
+import { FileImage, Info, UploadCloud, X } from "lucide-react";
+import { useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import Loader from "../../components/loader";
 import Shell from "../../components/shell";
-import {CertificateTable} from "../../components/tables/certificate-table";
-import {Button} from "../../components/ui/button";
-import {DEFAULT_LIMIT} from "../../helpers/service.helpers";
+import { CertificateTable } from "../../components/tables/certificate-table";
+import { Button } from "../../components/ui/button";
+import { DEFAULT_LIMIT } from "../../helpers/service.helpers";
 import {
   useGetCertificates,
   useUploadCertificateTemplate,
@@ -23,7 +23,7 @@ const CertificatesPage = () => {
   const fileInputRef = useRef(null);
   const uploadCourseCertificate = useUploadCertificateTemplate();
 
-  const {isLoading, data: issuedCertificatesData} = useGetCertificates({
+  const { isLoading, data: issuedCertificatesData } = useGetCertificates({
     page: pageFromUrl,
     limit: limitFromUrl,
     search: searchFromUrl,
@@ -43,18 +43,18 @@ const CertificatesPage = () => {
     const p = new URLSearchParams(searchParams);
     if (updates.page != null) p.set("page", String(updates.page));
     if (updates.limit != null) p.set("limit", String(updates.limit));
-    setSearchParams(p, {replace: true});
-    window.scrollTo({top: 0, behavior: "smooth"});
+    setSearchParams(p, { replace: true });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePageChange = (nextPage) => {
     const safe = Math.max(1, Math.min(nextPage, pagination.totalPages || 1));
-    setUrl({page: safe, limit: pagination.limit});
+    setUrl({ page: safe, limit: pagination.limit });
   };
 
   const handleLimitChange = (nextLimit) => {
     const limit = Number(nextLimit) > 0 ? Number(nextLimit) : DEFAULT_LIMIT;
-    setUrl({page: 1, limit});
+    setUrl({ page: 1, limit });
   };
 
   const handleFileChange = (e) => {
@@ -87,7 +87,7 @@ const CertificatesPage = () => {
     e.stopPropagation();
     setDragActive(false);
     const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile) handleFileChange({target: {files: [droppedFile]}});
+    if (droppedFile) handleFileChange({ target: { files: [droppedFile] } });
   };
 
   const handleCancel = () => {

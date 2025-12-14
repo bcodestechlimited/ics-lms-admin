@@ -9,13 +9,14 @@ import Shell from "../../components/shell";
 import {useGetCourse} from "../../hooks/useCourse";
 import {ContentWriteup} from "./[id]";
 import {useCourseStore} from "../../store/course-store";
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {DEFAULT_LIMIT} from "../../helpers/service.helpers";
 
 const CoursesPage = () => {
   const [modal, setModal] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const setQueryParams = useCourseStore((s) => s.setQueryParams);
+  const navigate = useNavigate();
 
   const pageFromUrl = Number(searchParams.get("page") || 1);
   const limitFromUrl = Number(searchParams.get("limit") || DEFAULT_LIMIT);
@@ -74,9 +75,17 @@ const CoursesPage = () => {
     setModal("");
   };
 
+  const btn = {
+    isActive: true,
+    title: "Create Course",
+    onClick: () => {
+      navigate("/courses/add-course");
+    },
+  };
+
   return (
     <div>
-      <Shell pageHeader="View all Courses" pageTitle="Courses">
+      <Shell pageHeader="View all Courses" pageTitle="Courses" btnAction={btn}>
         <div className="">
           <CourseTable
             courses={courses || []}
