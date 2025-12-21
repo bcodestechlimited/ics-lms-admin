@@ -1,4 +1,4 @@
-import {axiosInstance} from "../lib/axios";
+import { axiosInstance } from "../lib/axios";
 
 class CourseService {
   baseUrl = "/course";
@@ -9,7 +9,7 @@ class CourseService {
       for (const key in payload) {
         formData.append(key, payload[key]);
       }
-      const {data} = await axiosInstance.post(`${this.baseUrl}`, formData, {
+      const { data } = await axiosInstance.post(`${this.baseUrl}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -21,23 +21,23 @@ class CourseService {
   }
 
   async getCoursesService(params) {
-    const {data} = await axiosInstance.get(`${this.baseUrl}`, {params});
+    const { data } = await axiosInstance.get(`${this.baseUrl}`, { params });
     return data;
   }
 
   async getCourseByIdService(payload) {
-    const {id} = payload;
-    const {data} = await axiosInstance.get(
-      `${this.baseUrl}/${id}?role=superadmin`
+    const { id } = payload;
+    const { data } = await axiosInstance.get(
+      `${this.baseUrl}/${id}?role=superadmin`,
     );
     return data;
   }
 
   async updateCourseService(payload) {
-    const {courseId} = payload;
-    const {data} = await axiosInstance.put(
+    const { courseId } = payload;
+    const { data } = await axiosInstance.put(
       `${this.baseUrl}/${courseId}`,
-      payload
+      payload,
     );
     return data;
   }
@@ -52,12 +52,12 @@ class CourseService {
       if (section.type === "image" || section.type === "video") {
         if (section.content instanceof File) {
           formData.append(section.id, section.content);
-          return {...section, content: section.id};
+          return { ...section, content: section.id };
         }
       } else if (section.type === "quote") {
         if (section.content.avatar instanceof File) {
           formData.append(section.id, section.content.avatar);
-          return {...section, content: section.id};
+          return { ...section, content: section.id };
         }
       }
       return section;
@@ -65,7 +65,7 @@ class CourseService {
 
     formData.append("contentSections", JSON.stringify(processedSections));
 
-    const {data} = await axiosInstance.post(`/course-modules`, formData, {
+    const { data } = await axiosInstance.post(`/course-modules`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -74,65 +74,65 @@ class CourseService {
   }
 
   async addCourseAssessmentService(payload) {
-    const {data} = await axiosInstance.post(
+    const { data } = await axiosInstance.post(
       `${this.baseUrl}/course-assessment`,
-      payload
+      payload,
     );
     return data;
   }
 
   async addCourseBenchmarkService(payload) {
-    const {data} = await axiosInstance.post(
+    const { data } = await axiosInstance.post(
       `${this.baseUrl}/course-benchmark`,
-      payload
+      payload,
     );
     return data;
   }
 
   async createCourseCouponService(payload) {
-    const {data} = await axiosInstance.post(
+    const { data } = await axiosInstance.post(
       `${this.baseUrl}/course-coupon`,
-      payload
+      payload,
     );
     return data;
   }
 
   async getCourseCouponService(payload) {
-    const {data} = await axiosInstance.get(
-      `${this.baseUrl}/course-coupon?course_id=${payload?.courseId}`
+    const { data } = await axiosInstance.get(
+      `${this.baseUrl}/course-coupon?course_id=${payload?.courseId}`,
     );
     return data;
   }
 
   async createCoursePricingService(payload) {
-    const {data} = await axiosInstance.post(
+    const { data } = await axiosInstance.post(
       `${this.baseUrl}/course-pricing`,
-      payload
+      payload,
     );
     return data;
   }
 
   async publishCourseService(id) {
-    const {data} = await axiosInstance.patch(
-      `${this.baseUrl}/${id}/publish-course`
+    const { data } = await axiosInstance.patch(
+      `${this.baseUrl}/${id}/publish-course`,
     );
     return data;
   }
 
   async updateCourseAssessmentService(payload) {
-    const {courseId} = payload;
-    const {data} = await axiosInstance.put(
+    const { courseId } = payload;
+    const { data } = await axiosInstance.put(
       `${this.baseUrl}/course-assessment/${courseId}`,
-      payload
+      payload,
     );
     return data;
   }
 
   async editCourseBenchmarkService(payload) {
     try {
-      const {data} = await axiosInstance.put(
+      const { data } = await axiosInstance.put(
         `${this.baseUrl}/edit-benchmark`,
-        payload
+        payload,
       );
       return data;
     } catch (error) {
@@ -142,9 +142,9 @@ class CourseService {
 
   async updateCoursePricingService(payload) {
     try {
-      const {data} = await axiosInstance.patch(
+      const { data } = await axiosInstance.patch(
         `${this.baseUrl}/course-pricing`,
-        payload
+        payload,
       );
       return data;
     } catch (error) {
@@ -157,14 +157,14 @@ class CourseService {
       const formData = new FormData();
       formData.append("certificate", payload.certificate);
 
-      const {data} = await axiosInstance.post(
+      const { data } = await axiosInstance.post(
         `${this.baseUrl}/upload-course-certificate`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       return data;
     } catch (error) {
@@ -174,9 +174,9 @@ class CourseService {
 
   async getCourseSummary(payload) {
     try {
-      const {id} = payload;
-      const {data} = await axiosInstance.get(
-        `${this.baseUrl}/${id}/course-summary`
+      const { id } = payload;
+      const { data } = await axiosInstance.get(
+        `${this.baseUrl}/${id}/course-summary`,
       );
       return data;
     } catch (error) {
@@ -186,9 +186,9 @@ class CourseService {
 
   async getPublishedCourses(payload) {
     try {
-      const {data} = await axiosInstance.get(
+      const { data } = await axiosInstance.get(
         `${this.baseUrl}/course-published`,
-        {params: payload}
+        { params: payload },
       );
       return data;
     } catch (error) {
@@ -198,14 +198,14 @@ class CourseService {
 
   async assingCoursesToStaffs(payload) {
     try {
-      const {data} = await axiosInstance.post(
+      const { data } = await axiosInstance.post(
         this.baseUrl + "/assign-courses-to-staff",
         payload,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       return data;
@@ -216,8 +216,8 @@ class CourseService {
 
   async getCoursePriceById(payload) {
     try {
-      const {data} = await axiosInstance.get(
-        `${this.baseUrl}/course-pricing/${payload?.id}`
+      const { data } = await axiosInstance.get(
+        `${this.baseUrl}/course-pricing/${payload?.id}`,
       );
       return data;
     } catch (error) {
@@ -229,13 +229,15 @@ class CourseService {
     if (!payload.id) {
       throw new Error("Course id is required");
     }
-    const {data} = await axiosInstance.delete(`${this.baseUrl}/${payload.id}`);
+    const { data } = await axiosInstance.delete(
+      `${this.baseUrl}/${payload.id}`,
+    );
     return data;
   }
 
   async getCourseAssessmentService(id) {
-    const {data} = await axiosInstance.get(
-      `${this.baseUrl}/${id}/course-assessment`
+    const { data } = await axiosInstance.get(
+      `${this.baseUrl}/${id}/course-assessment`,
     );
     return data;
   }

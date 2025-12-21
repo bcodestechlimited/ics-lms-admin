@@ -1,6 +1,6 @@
-import {useGetPublishedCourse} from "../../hooks/useCourse";
-import {Button} from "../button";
-import {MultiSelect} from "../multi-select";
+import { useGetPublishedCourse } from "../../hooks/useCourse";
+import { Button } from "../button";
+import { MultiSelect } from "../multi-select";
 
 export const InviteStaffInBulkModal = ({
   handleFileChange,
@@ -11,7 +11,7 @@ export const InviteStaffInBulkModal = ({
   state,
   setState,
 }) => {
-  const {data, isLoading} = useGetPublishedCourse();
+  const { data, isLoading } = useGetPublishedCourse();
   const courses = !isLoading && data?.data?.courses;
 
   const handleStaffTypeChange = (isIcsStaff) => {
@@ -23,7 +23,7 @@ export const InviteStaffInBulkModal = ({
   };
 
   const onTextChange = (e) => {
-    setState((prev) => ({...prev, [e.target.name]: e.target.value}));
+    setState((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   return (
@@ -32,8 +32,20 @@ export const InviteStaffInBulkModal = ({
         <h2 className="text-xl font-semibold mb-4">
           Bulk assigning of courses
         </h2>
+        <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-800">
+          <p>📋 You can upload a maximum of 500 students per day.</p>
+        </div>
+        <div className="bg-gray-50 border border-gray-200 rounded-md p-3 text-sm">
+          <p className="text-gray-700 mb-2">Need help with the format?</p>
+          <a
+            href="/samples/staff-upload-template.xlsx"
+            download="staff-upload-template.xlsx"
+            className="text-blue-600 hover:text-blue-800 underline font-medium"
+          >
+            📥 Download Sample Excel Template
+          </a>
+        </div>
 
-        {/* Staff Type Selection */}
         <div className="mb-4">
           <label className="text-secondary block mb-2 text-[14px]">
             Staff Type
@@ -64,7 +76,6 @@ export const InviteStaffInBulkModal = ({
           </div>
         </div>
 
-        {/* Course Selection */}
         <div>
           <MultiSelect
             label="Select Course(s)"
@@ -94,7 +105,6 @@ export const InviteStaffInBulkModal = ({
           />
         </div>
 
-        {/* File Upload */}
         <div>
           <label htmlFor="" className="text-secondary text-[14px]">
             Select Users file
@@ -115,7 +125,6 @@ export const InviteStaffInBulkModal = ({
           </label>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={() => setIsUploadModalOpen(false)}>
             Cancel

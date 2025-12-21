@@ -124,7 +124,6 @@ const UsersPage = () => {
         loading: "Uploading...",
         success: (response) => {
           if (response.success) {
-            toast.success(response.message);
             refetch();
             return response.message;
           }
