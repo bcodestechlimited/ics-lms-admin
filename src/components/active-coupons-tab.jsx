@@ -1,15 +1,15 @@
-import {useSearchParams} from "react-router-dom";
-import {useGetActiveCoupons} from "../hooks/useCoupon";
+import { useSearchParams } from "react-router-dom";
+import { useGetActiveCoupons } from "../hooks/useCoupon";
 import Loader from "./loader";
 import CouponTable from "./tables/coupon-table";
-import {DEFAULT_LIMIT} from "../helpers/service.helpers";
+import { DEFAULT_LIMIT } from "../helpers/service.helpers";
 
 const ActiveCouponTab = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const pageFromUrl = Number(searchParams.get("page") || 1);
   const limitFromUrl = Number(searchParams.get("limit") || DEFAULT_LIMIT);
   const searchFromUrl = searchParams.get("search") || "";
-  const {data, isLoading} = useGetActiveCoupons({
+  const { data, isLoading } = useGetActiveCoupons({
     page: pageFromUrl,
     limit: limitFromUrl,
     search: searchFromUrl,
@@ -32,18 +32,18 @@ const ActiveCouponTab = () => {
       if (updates.search) p.set("search", updates.search);
       else p.delete("search");
     }
-    setSearchParams(p, {replace: true});
-    window.scrollTo({top: 0, behavior: "smooth"});
+    setSearchParams(p, { replace: true });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePageChange = (nextPage) => {
     const safe = Math.max(1, Math.min(nextPage, pagination.totalPages || 1));
-    setUrl({page: safe, limit: pagination.limit});
+    setUrl({ page: safe, limit: pagination.limit });
   };
 
   const handleLimitChange = (nextLimit) => {
     const limit = Number(nextLimit) > 0 ? Number(nextLimit) : DEFAULT_LIMIT;
-    setUrl({page: 1, limit});
+    setUrl({ page: 1, limit });
   };
 
   if (isLoading) {

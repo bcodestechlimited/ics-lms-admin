@@ -5,78 +5,18 @@ class CouponService {
 
   async createCoupon(payload) {
     try {
-      const {data} = await axiosInstance.post(`${this.baseUrl}`, payload);
+      const { data } = await axiosInstance.post(`${this.baseUrl}`, payload);
       return data;
     } catch (error) {
-      console.log({error});
+      console.log({ error });
       return "Internal Server error";
     }
   }
 
-  // async getAllCoupons({page = 1, limit = 20, search = ""} = {}) {
-  //   try {
-  //     const queryParams = new URLSearchParams();
-  //     // Adding query parameters to the URLSearchParams object
-  //     // if (queryOptions.page)
-  //     //   queryParams.append("page", queryOptions.page.toString());
-  //     // if (queryOptions.search)
-  //     //   queryParams.append("search", queryOptions.search);
-  //     // if (queryOptions.sortBy)
-  //     //   queryParams.append("sortBy", queryOptions.sortBy);
-  //     // if (queryOptions.limit)
-  //     //   queryParams.append("limit", queryOptions.limit.toString());
-
-  //     // const {filters} = queryOptions;
-  //     // if (filters) {
-  //     //   if (filters.discountType)
-  //     //     queryParams.append("discountType", filters.discountType);
-  //     //   if (filters.status)
-  //     //     queryParams.append("status", filters.status.toUpperCase());
-  //     //   if (filters.courseId) queryParams.append("courseId", filters.courseId);
-
-  //     //   if (filters.expirationDate?.start) {
-  //     //     queryParams.append(
-  //     //       "startDate",
-  //     //       filters.expirationDate.start.toISOString()
-  //     //     );
-  //     //   }
-  //     //   if (filters.expirationDate?.end) {
-  //     //     queryParams.append(
-  //     //       "endDate",
-  //     //       filters.expirationDate.end.toISOString()
-  //     //     );
-  //     //   }
-
-  //     //   if (filters.percentageRange?.min !== undefined) {
-  //     //     queryParams.append(
-  //     //       "minPercentage",
-  //     //       filters.percentageRange.min.toString()
-  //     //     );
-  //     //   }
-  //     //   if (filters.percentageRange?.max !== undefined) {
-  //     //     queryParams.append(
-  //     //       "maxPercentage",
-  //     //       filters.percentageRange.max.toString()
-  //     //     );
-  //     //   }
-  //     // }
-  //     const params = new URLSearchParams();
-  //     params.set("page", page);
-  //     params.set("limit", limit);
-  //     if (search) params.set("search", search);
-
-  //     const url = `${this.baseUrl}?${queryParams.toString()}`;
-  //     const {data} = await axiosInstance.get(url);
-  //     return {data};
-  //   } catch (error) {
-  //     return "Internal Server Error";
-  //   }
-  // }
-
   async getActiveCoupons(params) {
     try {
-      const {data} = await axiosInstance.get(
-        `${this.baseUrl}?status=ACTIVE&${params.toString()}`
+      const { data } = await axiosInstance.get(
+        `${this.baseUrl}?status=ACTIVE&${params.toString()}`,
       );
       return data;
     } catch (error) {
@@ -86,8 +26,8 @@ class CouponService {
 
   async getInactiveCoupons(params) {
     try {
-      const {data} = await axiosInstance.get(
-        `${this.baseUrl}?status=INACTIVE&${params.toString()}`
+      const { data } = await axiosInstance.get(
+        `${this.baseUrl}?status=INACTIVE&${params.toString()}`,
       );
       return data;
     } catch (error) {
@@ -97,8 +37,8 @@ class CouponService {
 
   async getCouponUsers(couponId) {
     try {
-      const {data} = await axiosInstance.get(
-        `${this.baseUrl}/${couponId}/users`
+      const { data } = await axiosInstance.get(
+        `${this.baseUrl}/${couponId}/users`,
       );
 
       return data;
@@ -109,7 +49,7 @@ class CouponService {
 
   async getCouponAnalytics() {
     try {
-      const {data} = await axiosInstance.get(`${this.baseUrl}/analytics`);
+      const { data } = await axiosInstance.get(`${this.baseUrl}/analytics`);
       return data;
     } catch (error) {
       return "Error fetching anayltics";
@@ -118,7 +58,7 @@ class CouponService {
 
   async getACoupon(id) {
     try {
-      const {data} = await axiosInstance.get(`${this.baseUrl}/${id}`);
+      const { data } = await axiosInstance.get(`${this.baseUrl}/${id}`);
       return data;
     } catch (error) {
       return "Error fetching Coupon";
@@ -127,9 +67,9 @@ class CouponService {
 
   async editCoupon(payload) {
     try {
-      const {data} = await axiosInstance.put(
+      const { data } = await axiosInstance.put(
         `${this.baseUrl}/edit-coupon`,
-        payload
+        payload,
       );
       return data;
     } catch (error) {
@@ -139,14 +79,51 @@ class CouponService {
 
   async updateCouponStatus(payload) {
     try {
-      const {data} = await axiosInstance.patch(
+      const { data } = await axiosInstance.patch(
         `${this.baseUrl}/update-status`,
-        payload
+        payload,
       );
       return data;
     } catch (error) {
       return "Error updating coupon status";
     }
+  }
+
+  async sendCouponToUsersForACourse(payload) {
+    try {
+      const formData = new FormData();
+      formData.append("file", payload.file);
+      formData.append("courseId", payload.courseId);
+      formData.append("discountType", payload.discountType);
+      formData.append("percentage", payload.percentage);
+      formData.append("expirationDate", payload.expirationDate);
+
+      const { data } = await axiosInstance.post(
+        `course-coupons/issue-coupon`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
+
+      return data;
+    } catch (error) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Internal Server Error";
+      throw new Error(message);
+    }
+  }
+
+  async getCourseCoupons(params) {
+    const { data } = await axiosInstance.get(
+      `course-coupons?${params.toString()}`,
+    );
+    return data;
+  }
+
+  async getCourseCouponAnalytics() {
+    const { data } = await axiosInstance.get(`course-coupons/analytics`);
+    return data;
   }
 }
 

@@ -18,7 +18,6 @@ import ForgotPasswordPage from "./pages/auth/forgot-password";
 import ResetPasswordPage from "./pages/auth/reset-password";
 import CertificatesPage from "./pages/certificates";
 import CouponsPage from "./pages/coupons";
-import CouponSlugPage from "./pages/coupons/[id]";
 import CoursesPage from "./pages/courses";
 import CourseDetails from "./pages/courses/[id]";
 import AddCoursePage from "./pages/courses/add-course";
@@ -114,10 +113,6 @@ const router = createBrowserRouter([
           {
             path: "/coupons",
             element: <CouponsPage />,
-          },
-          {
-            path: "/coupons/:id",
-            element: <CouponSlugPage />,
           },
           {
             path: "/templates",

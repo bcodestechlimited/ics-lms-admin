@@ -1,16 +1,16 @@
-import {Button} from "@headlessui/react";
-import {useEffect, useState} from "react";
+import { Button } from "@headlessui/react";
+import { useEffect, useState } from "react";
 import CourseTable from "../../components/course-table";
 import {
   AssignCourseModal,
   CourseAssignedModal,
 } from "../../components/modals/assign-course-modal";
 import Shell from "../../components/shell";
-import {useGetCourse} from "../../hooks/useCourse";
-import {ContentWriteup} from "./[id]";
-import {useCourseStore} from "../../store/course-store";
-import {useNavigate, useSearchParams} from "react-router-dom";
-import {DEFAULT_LIMIT} from "../../helpers/service.helpers";
+import { useGetCourse } from "../../hooks/useCourse";
+import { ContentWriteup } from "./[id]";
+import { useCourseStore } from "../../store/course-store";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { DEFAULT_LIMIT } from "../../helpers/service.helpers";
 
 const CoursesPage = () => {
   const [modal, setModal] = useState("");
@@ -30,7 +30,7 @@ const CoursesPage = () => {
     });
   }, [pageFromUrl, limitFromUrl, searchFromUrl, setQueryParams]);
 
-  const {data, isLoading} = useGetCourse();
+  const { data, isLoading } = useGetCourse();
   const courses = !isLoading && data?.data?.courses;
   const pagination = data?.data?.pagination ?? {
     totalCount: 0,
@@ -46,10 +46,10 @@ const CoursesPage = () => {
     searchParams.set("limit", String(pagination.limit || DEFAULT_LIMIT));
     // Keep existing search param stable
     if (searchFromUrl) searchParams.set("search", searchFromUrl);
-    setSearchParams(searchParams, {replace: true});
-    setQueryParams({page});
+    setSearchParams(searchParams, { replace: true });
+    setQueryParams({ page });
     // Optional UX: scroll to table top on page change
-    window.scrollTo({top: 0, behavior: "smooth"});
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleLimitChange = (nextLimit) => {
@@ -59,9 +59,9 @@ const CoursesPage = () => {
     searchParams.set("page", "1");
     searchParams.set("limit", String(limit));
     if (searchFromUrl) searchParams.set("search", searchFromUrl);
-    setSearchParams(searchParams, {replace: true});
-    setQueryParams({page: 1, limit});
-    window.scrollTo({top: 0, behavior: "smooth"});
+    setSearchParams(searchParams, { replace: true });
+    setQueryParams({ page: 1, limit });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleClose = () => {
@@ -123,7 +123,7 @@ const CoursesPage = () => {
   );
 };
 
-export const CourseCard = ({Img, title, desc, onClick, modal, setModal}) => {
+export const CourseCard = ({ Img, title, desc, onClick, modal, setModal }) => {
   return (
     <>
       <div className="border relative bg-white rounded-lg w-full max-w-[300px] grid grid-rows-[110px_130px_50px] shadow-sm p-2">
@@ -139,7 +139,7 @@ export const CourseCard = ({Img, title, desc, onClick, modal, setModal}) => {
           </h5>
           {ContentWriteup(
             desc,
-            "satoshi text-xs font-normal text-main line-clamp-2"
+            "satoshi text-xs font-normal text-main line-clamp-2",
           )}
         </div>
 

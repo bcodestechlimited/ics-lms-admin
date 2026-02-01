@@ -1,46 +1,13 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import DataTable from ".";
-import {Button} from "../button";
-import {useNavigate, useSearchParams} from "react-router-dom";
-import {useDebounce} from "../../hooks/use-debounce";
-
-const styles = {
-  box: {
-    contiainer: `px-4 w-fit h-10 rounded-3xl flex items-center justify-center`,
-    title: ``,
-  },
-};
-
-function getCouponStatus(status) {
-  switch (status.toUpperCase()) {
-    case "ACTIVE":
-      return (
-        <div className={`bg-[#0B6C25]/10 ${styles.box.contiainer}`}>
-          <p className="text-[#0B6C25] capitalize">{status}</p>
-        </div>
-      );
-    case "INACTIVE":
-      return (
-        <div className={`${styles.box.contiainer} bg-[#E34033]/10`}>
-          <p className="text-[#E34033] capitalize">{status}</p>
-        </div>
-      );
-    default:
-      return (
-        <div className={`${styles.box.contiainer} bg-[#FE9603]/10`}>
-          <p className="text-[#FE9603] capitalize">{status}</p>
-        </div>
-      );
-  }
-}
+import { useDebounce } from "../../hooks/use-debounce";
 
 const CouponTable = ({
   data,
   page,
   limit,
   totalPages,
-  totalCount,
-  filteredCount,
   onPageChange,
   onLimitChange,
   initialSearch = "",
@@ -48,108 +15,121 @@ const CouponTable = ({
   const [globalFilter, setGlobalFilter] = useState(initialSearch);
   const debounced = useDebounce(globalFilter, 500);
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const p = new URLSearchParams(searchParams);
     if (debounced) p.set("search", debounced);
     else p.delete("search");
     p.set("limit", String(limit));
-    setSearchParams(p, {replace: true});
+    setSearchParams(p, { replace: true });
   }, [debounced, limit, searchParams, setSearchParams]);
-
-  const prevSearchRef = useRef(initialSearch);
-  useEffect(() => {
-    if (debounced === prevSearchRef.current) return;
-    prevSearchRef.current = debounced;
-
-    const p = new URLSearchParams(window.location.search);
-    if (debounced) p.set("search", debounced);
-    else p.delete("search");
-    p.set("page", "1");
-    p.set("limit", String(limit));
-    setSearchParams(p, {replace: true});
-  }, [debounced, limit, setSearchParams]);
 
   const columns = useMemo(
     () => [
+      { header: "Coupon Code", accessorKey: "couponCode" },
       {
-        header: "Date Created",
-        accessorKey: "createdAt",
-        cell: ({getValue}) => new Date(getValue()).toLocaleDateString(),
-      },
-      {header: "Coupon Code", accessorKey: "couponCode"},
-      {
-        header: "Discount Percentage",
-        accessorKey: "percentage",
-        cell: ({getValue}) => {
-          if (!getValue()) return <p>NUll</p>;
-          return <p>{getValue()}%</p>;
+        header: "Issued To",
+        accessorKey: "issuedToUserId",
+        cell: ({ getValue }) => {
+          const u = getValue();
+          if (!u) return <p>Null</p>;
+          const fullName = [u.firstName, u.lastName].filter(Boolean).join(" ");
+          return (
+            <div className="space-y-1">
+              <p className="font-medium">{fullName || "Unnamed"}</p>
+              <p className="text-sm text-gray-500">{u.email}</p>
+            </div>
+          );
         },
       },
       {
-        header: "Course Name",
+        header: "Course",
         accessorKey: "courseId",
-        cell: ({getValue}) => {
-          if (!getValue()) return <p>NUll</p>;
-          return <p>{getValue().title}</p>;
+        cell: ({ getValue }) => {
+          const c = getValue();
+          if (!c) return <p>Null</p>;
+          return <p>{c.title}</p>;
         },
       },
       {
-        header: "Expiration Date",
+        header: "Expires",
         accessorKey: "expirationDate",
-        cell: ({getValue}) => {
-          if (!getValue()) return <p>NUll</p>;
-          return <p>{new Date(getValue()).toLocaleDateString()}</p>;
+        cell: ({ getValue }) => {
+          const v = getValue();
+          if (!v) return <p>Null</p>;
+          return <p>{new Date(v).toLocaleDateString()}</p>;
+        },
+      },
+      {
+        header: "Used",
+        accessorKey: "usedAt",
+        cell: ({ getValue }) => {
+          const usedAt = getValue();
+          return (
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
+                usedAt
+                  ? "bg-red-100 text-red-700"
+                  : "bg-green-100 text-green-700"
+              }`}
+            >
+              {usedAt ? "USED" : "NOT USED"}
+            </span>
+          );
         },
       },
       {
         header: "Status",
         accessorKey: "status",
-        cell: ({getValue}) => {
-          if (!getValue()) return <p>NUll</p>;
-          return getCouponStatus(getValue());
-        },
-      },
-      {header: "Maximum Usage", accessorKey: "maximumUsage"},
-      {
-        header: "Action",
-        accessorKey: "action",
-        cell: ({row, getValue}) => {
-          console.log("row", row.original);
+        cell: ({ row, getValue }) => {
+          const status = getValue();
+          const usedAt = row.original.usedAt;
+          const label = usedAt ? "INACTIVE" : status || "ACTIVE";
+
           return (
-            <Button
-              onClick={() => {
-                navigate(`/coupons/${row.original._id}`);
-                // setModal("view-status-modal");
-              }}
-              variant="secondary"
-              size="sm"
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
+                label === "ACTIVE"
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-gray-100 text-gray-700"
+              }`}
             >
-              View
-            </Button>
+              {label}
+            </span>
           );
         },
       },
+      // {
+      //   header: "Action",
+      //   accessorKey: "action",
+      //   cell: ({ row }) => (
+      //     <Button
+      //       onClick={() => navigate(`/course-coupons/${row.original._id}`)}
+      //       variant="secondary"
+      //       size="sm"
+      //     >
+      //       View
+      //     </Button>
+      //   ),
+      // },
     ],
-    [navigate]
+    [],
   );
 
   return (
     <div className="space-y-4">
-      <div>
-        <DataTable
-          data={data || []}
-          columns={columns}
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          page={page}
-          limit={limit}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
-          onLimitChange={onLimitChange}
-        />
-      </div>
+      <DataTable
+        data={data || []}
+        columns={columns}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
+        page={page}
+        limit={limit}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        onLimitChange={onLimitChange}
+      />
     </div>
   );
 };

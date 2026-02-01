@@ -18,3 +18,207 @@ export function PaymentIcon(props) {
     </svg>
   );
 }
+
+export const TotalCouponsIcon = ({ className = "w-12 h-12" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* Background coupons (stack effect) */}
+    <rect
+      x="6"
+      y="18"
+      width="32"
+      height="18"
+      rx="3"
+      fill="#9191F5"
+      opacity="0.3"
+    />
+    <rect
+      x="4"
+      y="15"
+      width="32"
+      height="18"
+      rx="3"
+      fill="#9191F5"
+      opacity="0.5"
+    />
+
+    {/* Main coupon */}
+    <rect x="8" y="12" width="32" height="18" rx="3" fill="#9191F5" />
+
+    {/* Perforation circles */}
+    <circle cx="20" cy="21" r="1.5" fill="white" />
+    <circle cx="24" cy="21" r="1.5" fill="white" />
+    <circle cx="28" cy="21" r="1.5" fill="white" />
+
+    {/* Dashed line */}
+    <line
+      x1="14"
+      y1="21"
+      x2="34"
+      y2="21"
+      stroke="white"
+      strokeWidth="1.5"
+      strokeDasharray="2 2"
+      opacity="0.6"
+    />
+
+    {/* Number indicator */}
+    <text x="16" y="19" fill="white" fontSize="8" fontWeight="bold">
+      ALL
+    </text>
+  </svg>
+);
+
+// Coupon Usage Icon - Coupon with checkmark
+export const CouponUsageIcon = ({ className = "w-12 h-12" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* Main coupon */}
+    <rect x="8" y="14" width="32" height="20" rx="3" fill="#FF9DA5" />
+
+    {/* Perforation circles */}
+    <circle cx="18" cy="24" r="1.5" fill="white" />
+    <circle cx="22" cy="24" r="1.5" fill="white" />
+    <circle cx="26" cy="24" r="1.5" fill="white" />
+    <circle cx="30" cy="24" r="1.5" fill="white" />
+
+    {/* Dashed line */}
+    <line
+      x1="12"
+      y1="24"
+      x2="36"
+      y2="24"
+      stroke="white"
+      strokeWidth="1.5"
+      strokeDasharray="2 2"
+      opacity="0.6"
+    />
+
+    {/* Checkmark circle */}
+    <circle cx="34" cy="18" r="8" fill="#FF502A" />
+    <path
+      d="M31 18L33 20L37 16"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// Active Coupons Icon - Coupon with sparkle/active indicator
+export const ActiveCouponsIcon = ({ className = "w-12 h-12" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* Main coupon */}
+    <rect x="10" y="16" width="28" height="18" rx="3" fill="#34D399" />
+
+    {/* Perforation circles */}
+    <circle cx="18" cy="25" r="1.5" fill="white" />
+    <circle cx="22" cy="25" r="1.5" fill="white" />
+    <circle cx="26" cy="25" r="1.5" fill="white" />
+    <circle cx="30" cy="25" r="1.5" fill="white" />
+
+    {/* Dashed line */}
+    <line
+      x1="14"
+      y1="25"
+      x2="34"
+      y2="25"
+      stroke="white"
+      strokeWidth="1.5"
+      strokeDasharray="2 2"
+      opacity="0.6"
+    />
+
+    {/* Active sparkles */}
+    <path
+      d="M36 12L37 15L40 16L37 17L36 20L35 17L32 16L35 15L36 12Z"
+      fill="#FF502A"
+    />
+    <path
+      d="M40 28L40.5 29.5L42 30L40.5 30.5L40 32L39.5 30.5L38 30L39.5 29.5L40 28Z"
+      fill="#FF502A"
+    />
+
+    {/* Text indicator */}
+    <text x="16" y="23" fill="white" fontSize="7" fontWeight="bold">
+      LIVE
+    </text>
+  </svg>
+);
+
+// Alternative: Simpler Filled Icons
+export const TotalCouponsIconSimple = ({ className = "w-12 h-12" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="24" cy="24" r="20" fill="#9191F5" opacity="0.2" />
+    <circle cx="24" cy="24" r="16" fill="#9191F5" />
+    <path
+      d="M18 24H30M24 18V30"
+      stroke="white"
+      strokeWidth="3"
+      strokeLinecap="round"
+    />
+    <rect
+      x="14"
+      y="20"
+      width="20"
+      height="8"
+      rx="2"
+      fill="white"
+      opacity="0.3"
+    />
+  </svg>
+);
+
+export const CouponUsageIconSimple = ({ className = "w-12 h-12" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="24" cy="24" r="20" fill="#FF9DA5" opacity="0.2" />
+    <circle cx="24" cy="24" r="16" fill="#FF9DA5" />
+    <path
+      d="M18 24L22 28L30 20"
+      stroke="white"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const ActiveCouponsIconSimple = ({ className = "w-12 h-12" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 48 48"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="24" cy="24" r="20" fill="#34D399" opacity="0.2" />
+    <circle cx="24" cy="24" r="16" fill="#34D399" />
+    <path
+      d="M24 14L26 20L32 22L26 24L24 30L22 24L16 22L22 20L24 14Z"
+      fill="white"
+    />
+  </svg>
+);
