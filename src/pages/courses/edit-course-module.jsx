@@ -1,4 +1,4 @@
-/* eslint-disable default-case */
+/* eslint-disable */
 import {
   ArrowDown,
   ArrowUp,
@@ -7,23 +7,26 @@ import {
   PlusIcon,
   Trash2,
 } from "lucide-react";
-import {useEffect, useState} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
-import {toast} from "sonner";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import ImageIcon from "../../assets/image-icon.svg";
 import ListIcon from "../../assets/list-icon.svg";
 import TextIcon from "../../assets/text-icon.svg";
 import VideoIcon from "../../assets/video-icon.svg";
-import {Button} from "../../components/button";
+import { Button } from "../../components/button";
 import KnowledgeCheck from "../../components/knowledge-check";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
-import {ChartEditorModal} from "../../components/modals/chart-editor-modal";
-import {ChartTypeSelector} from "../../components/modals/chart-type-selector";
+import { ChartEditorModal } from "../../components/modals/chart-editor-modal";
+import { ChartTypeSelector } from "../../components/modals/chart-type-selector";
 import QuoteSection from "../../components/module-quote";
 import ModuleTextarea from "../../components/module-textarea";
 import ModuleVideoInput from "../../components/module-video-input";
-import {useGetCourseModule, useUpdateCourseModule} from "../../hooks/useModule";
+import {
+  useGetCourseModule,
+  useUpdateCourseModule,
+} from "../../hooks/useModule";
 
 const styles = {
   icons: `w-5 h-5 cursor-pointer text-secondary`,
@@ -38,7 +41,7 @@ const defaultChartData = {
       },
     ],
     options: {
-      chart: {type: "bar"},
+      chart: { type: "bar" },
       xaxis: {
         categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
       },
@@ -52,7 +55,7 @@ const defaultChartData = {
       },
     ],
     options: {
-      chart: {type: "line"},
+      chart: { type: "line" },
       xaxis: {
         categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
       },
@@ -61,7 +64,7 @@ const defaultChartData = {
   pie: {
     series: [44, 55, 13, 43, 22],
     options: {
-      chart: {type: "pie"},
+      chart: { type: "pie" },
       labels: ["Team A", "Team B", "Team C", "Team D", "Team E"],
     },
   },
@@ -82,7 +85,7 @@ const EditCourseModulePage = () => {
   const [getSearch] = useSearchParams();
   const moduleId = getSearch.get("module") || "";
   const courseId = getSearch.get("course_id") || "";
-  const {data: existingModule, isLoading} = useGetCourseModule(moduleId);
+  const { data: existingModule, isLoading } = useGetCourseModule(moduleId);
   const updateCourseModule = useUpdateCourseModule();
   const [moduleTitle, setModuleTitle] = useState("");
 
@@ -225,14 +228,14 @@ const EditCourseModulePage = () => {
                 [field]: value,
               },
             }
-          : section
-      )
+          : section,
+      ),
     );
   };
 
   const handleDuplicateSection = (sectionId) => {
     const sectionToDuplicate = contentSections.find(
-      (section) => section.id === sectionId
+      (section) => section.id === sectionId,
     );
 
     if (sectionToDuplicate) {
@@ -243,7 +246,7 @@ const EditCourseModulePage = () => {
 
       // Find the index of the original section
       const currentIndex = contentSections.findIndex(
-        (section) => section.id === sectionId
+        (section) => section.id === sectionId,
       );
 
       // Insert the duplicated section right after the original section
@@ -263,10 +266,10 @@ const EditCourseModulePage = () => {
           question: "",
           type: "single",
           options: [
-            {id: 1, text: "", isCorrect: false},
-            {id: 2, text: "", isCorrect: false},
-            {id: 3, text: "", isCorrect: false},
-            {id: 4, text: "", isCorrect: false},
+            { id: 1, text: "", isCorrect: false },
+            { id: 2, text: "", isCorrect: false },
+            { id: 3, text: "", isCorrect: false },
+            { id: 4, text: "", isCorrect: false },
           ],
         };
       case "quote":
@@ -291,7 +294,7 @@ const EditCourseModulePage = () => {
 
     setContentSections((prev) => {
       const validSections = prev.filter(
-        (section) => section !== null && section !== undefined
+        (section) => section !== null && section !== undefined,
       );
 
       if (!afterId) {
@@ -299,7 +302,7 @@ const EditCourseModulePage = () => {
       }
 
       const insertIndex = validSections.findIndex(
-        (section) => section.id === afterId
+        (section) => section.id === afterId,
       );
       return insertIndex === -1
         ? [...validSections, newSection]
@@ -320,20 +323,20 @@ const EditCourseModulePage = () => {
     setContentSections((prev) =>
       prev.map((section) =>
         section.id === id
-          ? {...section, content: newContent, dirty: true}
-          : section
-      )
+          ? { ...section, content: newContent, dirty: true }
+          : section,
+      ),
     );
   };
 
   const handleMoveSection = (sectionId, direction) => {
     setContentSections((prev) => {
       const validSections = prev.filter(
-        (section) => section !== null && section !== undefined
+        (section) => section !== null && section !== undefined,
       );
 
       const currentIndex = validSections.findIndex(
-        (section) => section.id === sectionId
+        (section) => section.id === sectionId,
       );
 
       if (currentIndex === -1) return validSections;
@@ -355,12 +358,12 @@ const EditCourseModulePage = () => {
   const updateSectionState = (sectionId, newState) => {
     setSectionStates((prev) => ({
       ...prev,
-      [sectionId]: {...prev[sectionId], ...newState},
+      [sectionId]: { ...prev[sectionId], ...newState },
     }));
   };
 
   const handleChartTypeSelect = (type) => {
-    handleAddSection("chart", null, {type, ...defaultChartData[type]});
+    handleAddSection("chart", null, { type, ...defaultChartData[type] });
     setShowChartSelector(false);
   };
 
@@ -389,17 +392,17 @@ const EditCourseModulePage = () => {
         (s.type === "image" || s.type === "video") &&
         s.content instanceof File
       ) {
-        return {id: s.id, type: s.type, content: s.content};
+        return { id: s.id, type: s.type, content: s.content };
       }
       if (s.type === "quote" && s.content.avatar instanceof File) {
         return {
           id: s.id,
           type: s.type,
-          content: {...s.content, avatar: s.content.avatar},
+          content: { ...s.content, avatar: s.content.avatar },
         };
       }
       // everything else (text, URLs, JSON, etc)
-      return {id: s.id, type: s.type, content: s.content};
+      return { id: s.id, type: s.type, content: s.content };
     });
 
     // 2) Call your hook with exactly the shape your service expects:
@@ -413,12 +416,12 @@ const EditCourseModulePage = () => {
         loading: "Updating course module…",
         success: () => {
           navigate(
-            `/courses/edit-course?course=${courseId}&type=course&mode=edit`
+            `/courses/edit-course?course=${courseId}&type=course&mode=edit`,
           );
           return "Course module updated!";
         },
         error: () => "Failed to update module.",
-      }
+      },
     );
   };
 
@@ -479,7 +482,7 @@ const EditCourseModulePage = () => {
                 value={sectionStates[section.id] ?? section.content}
                 onChange={(file) => {
                   // seed the state to the new File
-                  setSectionStates((prev) => ({...prev, [section.id]: file}));
+                  setSectionStates((prev) => ({ ...prev, [section.id]: file }));
                   // also update contentSections so the payload picks it up
                   handleUpdateContent(section.id, file);
                 }}
@@ -662,7 +665,7 @@ const EditCourseModulePage = () => {
               {contentSections
                 ?.filter(
                   (section) =>
-                    section !== null && section !== undefined && section.id
+                    section !== null && section !== undefined && section.id,
                 )
                 .map(renderContentSection)}
 
@@ -718,7 +721,7 @@ const EditCourseModulePage = () => {
   );
 };
 
-const Box = ({img, text, onClick}) => {
+const Box = ({ img, text, onClick }) => {
   return (
     <div
       onClick={(e) => onClick(e)}

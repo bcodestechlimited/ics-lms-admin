@@ -1,4 +1,4 @@
-import { BarChart, LineChart, PieChart } from "lucide-react";
+import { BarChart, LineChart } from "lucide-react";
 
 export const ChartTypeSelector = ({ onSelect, position }) => {
   const chartTypes = [

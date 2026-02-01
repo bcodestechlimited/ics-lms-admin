@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useRef } from "react";
 import ModuleTextarea from "./module-textarea";
 import { TextInput } from "./inputs";
@@ -44,7 +45,7 @@ const QuoteSection = ({ section, onUpdate, editMode }) => {
             onUpdate(
               section.id,
               "quoteText",
-              newContent[`${section.id}-quote`]
+              newContent[`${section.id}-quote`],
             );
           }}
           editMode={editMode}

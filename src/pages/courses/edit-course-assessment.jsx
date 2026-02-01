@@ -8,8 +8,6 @@ import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
 import {
   useGetCourseAssessment,
-  // useCourseAssessment,
-  useGetCourseById,
   useUpdateCourseAssessment,
 } from "../../hooks/useCourse";
 
@@ -22,10 +20,10 @@ const EditCourseAssessmentPage = () => {
   const editCourseAssessment = useUpdateCourseAssessment();
 
   // const {data, isLoading} = useGetCourseById({id: courseId});
-  const {data: courseAssessmentData, isLoading} =
+  const { data: courseAssessmentData, isLoading } =
     useGetCourseAssessment(courseId);
 
-  console.log({courseAssessmentData});
+  console.log({ courseAssessmentData });
 
   useEffect(() => {
     const fetched = courseAssessmentData?.responseObject?.data;
@@ -58,8 +56,8 @@ const EditCourseAssessmentPage = () => {
       success: (response) => {
         navigate(
           `/courses/edit-course-retakes?mode=edit_course&course_id=${encodeURIComponent(
-            courseId
-          )}`
+            courseId,
+          )}`,
         );
         return "Course Assessment updated";
       },

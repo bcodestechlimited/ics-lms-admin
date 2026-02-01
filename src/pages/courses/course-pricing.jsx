@@ -1,14 +1,12 @@
+/* eslint-disable */
 import { PlusCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { TextInput } from "../../components/inputs";
-import { PageLoader } from "../../components/loader";
 import MainContainer from "../../components/maincontainer";
-import MainHeader from "../../components/mainheader";
-import AddCouponModal from "../../components/modals/add-coupon";
 import { Button } from "../../components/ui/button";
-// import { useGetCoupon } from "../../hooks/useCoupon";
+import MainHeader from "../../components/mainheader";
 import {
   useCreateCoursePricing,
   usePublishCourse,

@@ -1,7 +1,7 @@
-import React, {useEffect} from "react";
-import {useNavigate} from "react-router-dom";
-import {MainBtn} from "../../components/button";
+import { useNavigate } from "react-router-dom";
+import { MainBtn } from "../../components/button";
 import ChartWrapper from "../../components/chart-wrapper";
+import Loader from "../../components/loader";
 import MainContainer from "../../components/maincontainer";
 import MainHeader from "../../components/mainheader";
 import {
@@ -11,7 +11,6 @@ import {
   useGetSkillLevelDistribution,
   useGetTopEnrolledCourses,
 } from "../../hooks/useAnalytics";
-import Loader from "../../components/loader";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -43,14 +42,14 @@ const DashboardPage = () => {
 
   const overTimeRaw = overTimeRes?.responseObject ?? [];
   const overTimeData = overTimeRaw.filter(
-    (d) => d.date != null && d.count != null
+    (d) => d.date != null && d.count != null,
   );
   const overTimeCats = overTimeData.map((d) => String(d.date));
   const overTimeCounts = overTimeData.map((d) => Number(d.count));
 
   const categoryRaw = byCategoryRes?.responseObject ?? [];
   const categoryData = categoryRaw.filter(
-    (d) => d._id != null && d.count != null
+    (d) => d._id != null && d.count != null,
   );
   const categoryCats = categoryData.map((d) => String(d._id));
   const categoryCnts = categoryData.map((d) => Number(d.count));
@@ -62,54 +61,54 @@ const DashboardPage = () => {
 
   const enrollRaw = enrollRes?.responseObject ?? [];
   const enrollData = enrollRaw.filter(
-    (d) => d.title != null && d.enrollmentCount != null
+    (d) => d.title != null && d.enrollmentCount != null,
   );
   const enrollCats = enrollData.map((d) => String(d.title));
   const enrollCnts = enrollData.map((d) => Number(d.enrollmentCount));
 
   const topRaw = topEnrolledRes?.responseObject ?? [];
   const topData = topRaw.filter(
-    (d) => d.title != null && d.enrollmentCount != null
+    (d) => d.title != null && d.enrollmentCount != null,
   );
   const topCats = topData.map((d) => String(d.title));
   const topEnrollCnt = topData.map((d) => Number(d.enrollmentCount));
 
   // --- chart configurations ---
   const createdOptions = {
-    chart: {id: "courses-over-time"},
-    xaxis: {categories: overTimeCats},
-    stroke: {curve: "smooth"},
-    title: {text: "Courses Created Over Time", align: "center"},
+    chart: { id: "courses-over-time" },
+    xaxis: { categories: overTimeCats },
+    stroke: { curve: "smooth" },
+    title: { text: "Courses Created Over Time", align: "center" },
   };
-  const createdSeries = [{name: "New Courses", data: overTimeCounts}];
+  const createdSeries = [{ name: "New Courses", data: overTimeCounts }];
 
   const categoryOptions = {
     labels: categoryCats,
-    title: {text: "Courses by Category", align: "center"},
+    title: { text: "Courses by Category", align: "center" },
   };
   const categorySeries = categoryCnts;
 
   const skillOptions = {
     labels: skillCats,
-    title: {text: "Courses by Skill Level", align: "center"},
-    plotOptions: {pie: {donut: {size: "60%"}}},
+    title: { text: "Courses by Skill Level", align: "center" },
+    plotOptions: { pie: { donut: { size: "60%" } } },
   };
   const skillSeries = skillCnts;
 
   const enrollOptions = {
-    chart: {id: "enroll-counts"},
-    xaxis: {categories: enrollCats},
-    title: {text: "Enrollments per Course", align: "center"},
+    chart: { id: "enroll-counts" },
+    xaxis: { categories: enrollCats },
+    title: { text: "Enrollments per Course", align: "center" },
   };
-  const enrollSeries = [{name: "Enrollments", data: enrollCnts}];
+  const enrollSeries = [{ name: "Enrollments", data: enrollCnts }];
 
   const topOptions = {
-    chart: {stacked: false},
-    plotOptions: {bar: {horizontal: true}},
-    xaxis: {categories: topCats},
-    title: {text: "Top 5 Enrolled Courses", align: "center"},
+    chart: { stacked: false },
+    plotOptions: { bar: { horizontal: true } },
+    xaxis: { categories: topCats },
+    title: { text: "Top 5 Enrolled Courses", align: "center" },
   };
-  const topSeries = [{name: "Enrollments", data: topEnrollCnt}];
+  const topSeries = [{ name: "Enrollments", data: topEnrollCnt }];
 
   return (
     <div>

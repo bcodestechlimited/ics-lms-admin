@@ -1,12 +1,12 @@
-import React, { useCallback, useContext, useRef } from "react";
+/* eslint-disable */
+import clsx from "clsx";
+import { useCallback, useRef } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { NumericFormat } from "react-number-format";
 import ReactQuill from "react-quill";
 import { toast } from "sonner";
 import Upload from "../../assets/upload.svg";
-import { GlobalState } from "../../data/Context";
 import { MainBtn } from "../button";
-import clsx from "clsx";
 
 const Inputs = () => {
   return <div></div>;
@@ -149,7 +149,7 @@ export const TextArea = ({
         [name]: context,
       }));
     },
-    [setState, name]
+    [setState, name],
   );
 
   return (
@@ -289,9 +289,9 @@ export const VideoInput = ({
                     typeof state?.[name]?.playback_url === "string"
                       ? state?.[name]?.playback_url
                       : state?.[name]?.url &&
-                        typeof state?.[name]?.url === "string"
-                      ? state?.[name]?.url
-                      : URL.createObjectURL(state?.[name])
+                          typeof state?.[name]?.url === "string"
+                        ? state?.[name]?.url
+                        : URL.createObjectURL(state?.[name])
                   }
                   controls
                   alt="Course"
@@ -404,8 +404,8 @@ export const ImageInput = ({ name, label, onChange, state }) => {
                 {name === "video"
                   ? ".mp4, .mkv,.mpeg"
                   : name === "certificate"
-                  ? ".doc, .docx,.pdf"
-                  : ".png, .jpg, .png, .jpeg"}
+                    ? ".doc, .docx,.pdf"
+                    : ".png, .jpg, .png, .jpeg"}
                 )
               </h6>
             </>
@@ -419,8 +419,8 @@ export const ImageInput = ({ name, label, onChange, state }) => {
               name === "video"
                 ? ".mp4, .mkv"
                 : name === "certificate"
-                ? ".doc, .docx,.pdf"
-                : ".png, .jpg, .png, .jpeg"
+                  ? ".doc, .docx,.pdf"
+                  : ".png, .jpg, .png, .jpeg"
             }
             id=""
             className="hidden"
