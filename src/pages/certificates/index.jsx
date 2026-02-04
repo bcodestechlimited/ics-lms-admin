@@ -1,298 +1,247 @@
-import { FileImage, Info, UploadCloud, X } from "lucide-react";
-import { useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
-import Loader from "../../components/loader";
+import { useMemo, useState } from "react";
 import Shell from "../../components/shell";
-import { CertificateTable } from "../../components/tables/certificate-table";
-import { Button } from "../../components/ui/button";
-import { DEFAULT_LIMIT } from "../../helpers/service.helpers";
 import {
-  useGetCertificates,
-  useUploadCertificateTemplate,
-} from "../../hooks/use-admin";
+  useActiveCertificateSignature,
+  useActiveCertificateTemplate,
+  useUploadCertificateSignatureFlow,
+  useUploadCertificateTemplateFlow,
+} from "../../hooks/useCertificate";
 
 const CertificatesPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const pageFromUrl = Number(searchParams.get("page") || 1);
-  const limitFromUrl = Number(searchParams.get("limit") || DEFAULT_LIMIT);
-  const searchFromUrl = searchParams.get("search") || "";
-  const [file, setFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef(null);
-  const uploadCourseCertificate = useUploadCertificateTemplate();
+  const [templateFile, setTemplateFile] = useState(null);
+  const [signatureFile, setSignatureFile] = useState(null);
 
-  const { isLoading, data: issuedCertificatesData } = useGetCertificates({
-    page: pageFromUrl,
-    limit: limitFromUrl,
-    search: searchFromUrl,
-  });
+  const templateQuery = useActiveCertificateTemplate();
+  const signatureQuery = useActiveCertificateSignature();
 
-  const api = issuedCertificatesData;
-  const rows = api?.users ?? [];
-  const pagination = api?.pagination ?? {
-    totalCount: 0,
-    filteredCount: 0,
-    totalPages: 1,
-    page: pageFromUrl,
-    limit: limitFromUrl,
+  const uploadTemplate = useUploadCertificateTemplateFlow();
+  const uploadSignature = useUploadCertificateSignatureFlow();
+
+  // console.log("template-query", templateQuery.data.data.data.data.url);
+
+  const templateError = useMemo(() => {
+    if (!templateFile) return "";
+    const isPdf =
+      templateFile.type === "application/pdf" ||
+      templateFile.name.toLowerCase().endsWith(".pdf");
+    if (!isPdf) return "Certificate template must be a PDF.";
+    const maxBytes = 10 * 1024 * 1024;
+    if (templateFile.size > maxBytes)
+      return "PDF is too large. Max size is 10MB.";
+    return "";
+  }, [templateFile]);
+
+  const signatureError = useMemo(() => {
+    if (!signatureFile) return "";
+    const isPng =
+      signatureFile.type === "image/png" ||
+      signatureFile.name.toLowerCase().endsWith(".png");
+    if (!isPng) return "Signature must be a PNG file.";
+    const maxBytes = 2 * 1024 * 1024;
+    if (signatureFile.size > maxBytes)
+      return "PNG is too large. Max size is 2MB.";
+    return "";
+  }, [signatureFile]);
+
+  const handleUploadTemplate = async () => {
+    if (!templateFile || templateError) return;
+    const result = await uploadTemplate.mutateAsync({ file: templateFile });
+    setTemplateFile(null);
+    return result;
   };
 
-  const setUrl = (updates = {}) => {
-    const p = new URLSearchParams(searchParams);
-    if (updates.page != null) p.set("page", String(updates.page));
-    if (updates.limit != null) p.set("limit", String(updates.limit));
-    setSearchParams(p, { replace: true });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handlePageChange = (nextPage) => {
-    const safe = Math.max(1, Math.min(nextPage, pagination.totalPages || 1));
-    setUrl({ page: safe, limit: pagination.limit });
-  };
-
-  const handleLimitChange = (nextLimit) => {
-    const limit = Number(nextLimit) > 0 ? Number(nextLimit) : DEFAULT_LIMIT;
-    setUrl({ page: 1, limit });
-  };
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      if (!["application/pdf"].includes(selectedFile.type)) {
-        alert("Please upload only PDF files");
-        return;
-      }
-      if (selectedFile.size > 2 * 1024 * 1024) {
-        alert("File size must be less than 2MB");
-        return;
-      }
-      setFile(selectedFile);
-    }
-  };
-
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile) handleFileChange({ target: { files: [droppedFile] } });
-  };
-
-  const handleCancel = () => {
-    setFile(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
-
-  const handleUpload = async (e) => {
-    setUploading(true);
-    e.preventDefault();
-    if (file) {
-      const formData = new FormData();
-      formData.append("certificate_template", file);
-      toast.promise(uploadCourseCertificate.mutateAsync(formData), {
-        loading: "Uploading certificate template",
-        success: (res) => {
-          if (!res.success) {
-            setUploading(false);
-            return "Upload was not successful";
-          }
-          setUploading(false);
-          return "Upload was successful";
-        },
-        error: () => {
-          setUploading(false);
-          return "Error Uploading file";
-        },
-      });
-    }
+  const handleUploadSignature = async () => {
+    if (!signatureFile || signatureError) return;
+    const result = await uploadSignature.mutateAsync({ file: signatureFile });
+    setSignatureFile(null);
+    return result;
   };
 
   return (
-    <Shell pageHeader="Certificates" pageTitle="Certificates">
-      <div className="">
-        {isLoading ? (
-          <div className="flex items-center justify-center mt-10">
-            <Loader />
+    <Shell pageHeader="" pageTitle="Certificates">
+      <div className="mx-auto w-full max-w-6xl space-y-6">
+        {/* Global error */}
+        {(uploadTemplate.isError || uploadSignature.isError) && (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900">
+            {uploadTemplate.error?.message || uploadSignature.error?.message}
           </div>
-        ) : (
-          !isLoading && (
-            <CertificateTable
-              data={rows}
-              page={pagination.page}
-              limit={pagination.limit}
-              totalPages={pagination.totalPages}
-              onPageChange={handlePageChange}
-              onLimitChange={handleLimitChange}
-            />
-          )
         )}
 
-        {/* idea: in the future it is possible that this feature is required */}
-        {/* <div>
-          {modal === "open-issue-certificate-modal" && (
-            <IssueCertificateModal
-              handleClose={() => setModal("")}
-              user={user}
-            />
-          )}
-        </div> */}
-      </div>
+        {/* Global success */}
+        {(uploadTemplate.isSuccess || uploadSignature.isSuccess) && (
+          <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-900">
+            Upload saved successfully.
+          </div>
+        )}
 
-      <section className="mt-20 space-y-4">
-        <h2 className="font-semibold text-secondary text-xl flex items-center gap-x-1">
-          Upload Certificate template{" "}
-          <span
-            className=""
-            data-tooltip-id="my-tooltip"
-            data-tooltip-content={"Upload student's certificate template"}
-          >
-            {" "}
-            <Info size={15} />{" "}
-          </span>
-        </h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Template */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-base font-semibold text-slate-900">
+              Certificate Template (PDF)
+            </h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Upload the institution’s PDF template. This is the background used
+              for generated certificates.
+            </p>
 
-        <section className="bg-white border rounded-xl p-12">
-          <div className="max-w-2xl mx-auto space-y-8">
-            <div
-              className={`border-2 border-dashed rounded-lg p-6 transition-all ${
-                dragActive
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                  : "border-gray-300 hover:border-gray-400 dark:border-gray-700"
-              }`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <form onSubmit={handleUpload}>
-                <div className="text-center">
-                  <label
-                    htmlFor="file-upload"
-                    className="cursor-pointer flex flex-col items-center space-y-4"
-                  >
-                    {!file ? (
-                      <>
-                        <div className="p-3 bg-gray-100 rounded-full dark:bg-gray-800">
-                          <UploadCloud className="w-8 h-8 text-gray-600 dark:text-gray-400" />
-                        </div>
-                        <div className="mt-2">
-                          <p className="font-medium text-gray-900 dark:text-gray-100">
-                            Drag and drop or click to upload
-                          </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            PNG or JPG (MAX. 2MB)
-                          </p>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full">
-                        <div className="flex flex-col items-center space-y-4">
-                          <div className="relative">
-                            {file.type.startsWith("image/") ? (
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt="Preview"
-                                className="h-32 w-32 object-contain rounded-lg border"
-                              />
-                            ) : (
-                              <FileImage className="w-16 h-16 text-gray-400" />
-                            )}
-                          </div>
-                          <div className="flex items-center space-x-2 bg-gray-100 px-4 py-2 rounded-md dark:bg-gray-800 max-w-full">
-                            <span className="text-sm text-gray-700 dark:text-gray-300 truncate">
-                              {file.name}
-                            </span>
-                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                              {(file.size / 1024 / 1024).toFixed(2)}MB
-                            </span>
-                            <button
-                              type="button"
-                              onClick={handleCancel}
-                              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center"
-                            >
-                              <X className="w-4 h-4" />
-                              <span className="ml-1 text-sm">Remove</span>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </label>
+            <div className="mt-4 space-y-3">
+              <input
+                type="file"
+                accept="application/pdf,.pdf"
+                onChange={(e) => setTemplateFile(e.target.files?.[0] || null)}
+                className="block w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200"
+              />
 
-                  <input
-                    ref={fileInputRef}
-                    id="file-upload"
-                    name="file-upload"
-                    type="file"
-                    accept="application/pdf"
-                    onChange={handleFileChange}
-                    className="sr-only"
-                    disabled={uploading}
-                  />
+              {templateError ? (
+                <div className="text-xs text-red-700">{templateError}</div>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={handleUploadTemplate}
+                disabled={
+                  !templateFile ||
+                  Boolean(templateError) ||
+                  uploadTemplate.isPending
+                }
+                className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {uploadTemplate.isPending ? "Uploading..." : "Upload Template"}
+              </button>
+
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                <div className="font-medium text-slate-900">
+                  Active template
                 </div>
-
-                {file && (
-                  <div className="mt-6 flex justify-center gap-4">
-                    <Button
-                      type="submit"
-                      disabled={uploading}
-                      className="px-8 bg-green-600 hover:bg-green-700"
-                    >
-                      {uploading ? (
-                        <span className="flex items-center">
-                          <svg
-                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                          Uploading...
-                        </span>
-                      ) : (
-                        "Confirm Upload"
-                      )}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={handleCancel}
-                      variant="outline"
-                      disabled={uploading}
-                    >
-                      Cancel
-                    </Button>
+                {templateQuery.isLoading ? (
+                  <div className="mt-2 text-sm text-slate-600">Loading...</div>
+                ) : templateQuery.data?.data?.data?.data?.url ? (
+                  <div className="mt-2 space-y-1">
+                    <div>
+                      <span className="text-slate-500">publicId:</span>{" "}
+                      <span className="font-mono">
+                        {templateQuery?.data?.data?.data?.data?.publicId}
+                      </span>
+                    </div>
+                    <div>
+                      <a
+                        className="underline"
+                        href={templateQuery?.data?.data?.data?.data?.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Open PDF
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-2 text-sm text-slate-600">
+                    No template uploaded yet.
                   </div>
                 )}
-              </form>
+              </div>
             </div>
           </div>
-        </section>
-      </section>
+
+          {/* Signature */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-base font-semibold text-slate-900">
+              Signature (PNG)
+            </h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Upload a transparent PNG signature. This will be stamped onto
+              generated certificates.
+            </p>
+
+            <div className="mt-4 space-y-3">
+              <input
+                type="file"
+                accept="image/png,.png"
+                onChange={(e) => setSignatureFile(e.target.files?.[0] || null)}
+                className="block w-full cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200"
+              />
+
+              {signatureError ? (
+                <div className="text-xs text-red-700">{signatureError}</div>
+              ) : null}
+
+              <button
+                type="button"
+                onClick={handleUploadSignature}
+                disabled={
+                  !signatureFile ||
+                  Boolean(signatureError) ||
+                  uploadSignature.isPending
+                }
+                className="inline-flex w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {uploadSignature.isPending
+                  ? "Uploading..."
+                  : "Upload Signature"}
+              </button>
+
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+                <div className="font-medium text-slate-900">
+                  Active signature
+                </div>
+                {signatureQuery.isLoading ? (
+                  <div className="mt-2 text-sm text-slate-600">Loading...</div>
+                ) : signatureQuery?.data?.data?.data?.data?.url ? (
+                  <div className="mt-2 space-y-2">
+                    <div>
+                      <span className="text-slate-500">publicId:</span>{" "}
+                      <span className="font-mono">
+                        {signatureQuery?.data?.data?.data?.data?.publicId}
+                      </span>
+                    </div>
+                    <div>
+                      <a
+                        className="underline"
+                        href={signatureQuery?.data?.data?.data?.data?.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Open image
+                      </a>
+                    </div>
+                    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+                      <img
+                        src={signatureQuery?.data?.data?.data?.data?.url}
+                        alt="Signature preview"
+                        className="h-24 w-full object-contain p-2"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-2 text-sm text-slate-600">
+                    No signature uploaded yet.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-700 shadow-sm">
+          <div className="font-semibold text-slate-900">Flow</div>
+          <ol className="mt-2 list-decimal space-y-1 pl-5">
+            <li>
+              Frontend requests a signed Cloudinary upload payload from your
+              backend.
+            </li>
+            <li>
+              Frontend uploads the file directly to Cloudinary with that
+              payload.
+            </li>
+            <li>
+              Frontend sends{" "}
+              <span className="font-mono">{"{ publicId, url }"}</span> to the
+              backend for storage.
+            </li>
+          </ol>
+        </div>
+      </div>
     </Shell>
   );
 };

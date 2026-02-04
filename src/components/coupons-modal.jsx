@@ -27,8 +27,6 @@ const SendCourseCouponToUsersModal = ({ setState }) => {
   const { data: coursesData, isLoading: isCoursesLoading } = useGetCourse();
   const { mutateAsync, isLoading } = useSendCouponToUsersForACourse();
 
-  console.log("isLoading", isLoading);
-
   const courses = useMemo(() => {
     const list =
       coursesData?.responseObject?.data ||
@@ -197,6 +195,13 @@ const SendCourseCouponToUsersModal = ({ setState }) => {
               Accepted: .xlsx, .xls, .csv — must contain a column named{" "}
               <span className="font-semibold">email</span>
             </p>
+            {/* <a
+              href="../../coupon-example.xlsx"
+              download
+              className="mt-2 inline-flex text-xs font-medium text-[#FF502A] hover:underline"
+            >
+              Download template (.xlsx)
+            </a>*/}
           </div>
         </div>
 
