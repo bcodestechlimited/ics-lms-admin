@@ -241,6 +241,14 @@ class CourseService {
     );
     return data;
   }
+
+  async updateCourseImage(courseId, payload) {
+    const { data } = await axiosInstance.patch(
+      `${this.baseUrl}/course-image/${courseId}`,
+      payload,
+    );
+    return data;
+  }
 }
 
 export const courseService = new CourseService();

@@ -1,7 +1,7 @@
-import {Eye, EyeOff} from "lucide-react";
-import {useState} from "react";
-import {toast} from "sonner";
-import {useUpdateUserPassword} from "../hooks/useUser";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useUpdateUserPassword } from "../hooks/useUser";
 
 export default function UpdatePasswordForm() {
   const updatePassword = useUpdateUserPassword();
@@ -38,14 +38,14 @@ export default function UpdatePasswordForm() {
           setIsPwdLoading(false);
           return err?.message || "Failed to update password";
         },
-      }
+      },
     );
   };
 
   return (
     <form
       onSubmit={handlePasswordSubmit}
-      className="bg-white p-6 rounded-lg shadow-md"
+      className="bg-white p-6 rounded-lg border"
     >
       <h2 className="text-2xl font-semibold mb-6">Change Password</h2>
 

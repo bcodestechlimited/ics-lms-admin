@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCreateCourseFromTemplate } from "../hooks/useTemplate";
-import { ContentWriteup } from "../pages/courses/[id]";
+import { ContentWriteup } from "../pages/courses/[id].jsx";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ export const TemplateCard = ({
           if (response.success) {
             toast.success("Course created from template successfully");
             navigate(
-              `/courses/edit-course?course=${response?.responseObject.data._id}&mode=edit&type=course`
+              `/courses/edit-course?course=${response?.responseObject.data._id}&mode=edit&type=course`,
             );
             return "Course created successfully";
           } else {
@@ -37,7 +37,7 @@ export const TemplateCard = ({
       });
     } catch (error) {
       toast.error(
-        "An error occurred while creating the course. Please try again!"
+        "An error occurred while creating the course. Please try again!",
       );
     } finally {
       setLoading(false);
@@ -59,7 +59,7 @@ export const TemplateCard = ({
           </h5>
           {ContentWriteup(
             desc,
-            "satoshi text-xs font-normal text-main line-clamp-6"
+            "satoshi text-xs font-normal text-main line-clamp-6",
           )}
         </div>
 

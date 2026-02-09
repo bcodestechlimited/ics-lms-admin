@@ -7,7 +7,7 @@ import {
 } from "../../components/modals/assign-course-modal";
 import Shell from "../../components/shell";
 import { useGetCourse } from "../../hooks/useCourse";
-import { ContentWriteup } from "./[id]";
+import { ContentWriteup } from "./[id].jsx";
 import { useCourseStore } from "../../store/course-store";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { DEFAULT_LIMIT } from "../../helpers/service.helpers";

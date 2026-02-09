@@ -1,7 +1,7 @@
-import {Eye, EyeOff} from "lucide-react";
-import React, {useState} from "react";
-import {toast} from "sonner";
-import {useCreateAdminAccount} from "../hooks/use-admin";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useCreateAdminAccount } from "../hooks/use-admin";
 
 const CreateAdminForm = () => {
   const createAdmin = useCreateAdminAccount();
@@ -11,16 +11,17 @@ const CreateAdminForm = () => {
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
 
+  console.log("password", password);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!firstName || !lastName || !email || !password) return;
 
     toast.promise(
-      createAdmin.mutateAsync({firstName, lastName, email, password}),
+      createAdmin.mutateAsync({ firstName, lastName, email, password }),
       {
         loading: "Creating admin…",
         success: (res) => {
-          console.log("res", res);
           if (res.success) {
             setFirstName("");
             setLastName("");
@@ -34,12 +35,12 @@ const CreateAdminForm = () => {
           console.log("err", err);
           return err?.response.data.message || "Failed to create admin";
         },
-      }
+      },
     );
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg border">
       <h2 className="text-2xl font-semibold mb-6">Create Admin Account</h2>
 
       {/* First Name */}
@@ -86,6 +87,7 @@ const CreateAdminForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          autoComplete="false"
           className="w-full border rounded px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button

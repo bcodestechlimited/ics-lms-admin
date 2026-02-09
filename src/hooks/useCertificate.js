@@ -60,7 +60,6 @@ export const useUploadCertificateSignatureFlow = () => {
 
   return useMutation({
     mutationFn: async (payload) => {
-      // payload: { file }
       const signaturePayload =
         await uploadsService.getCloudinaryUploadSignature(
           "certificate_signature",

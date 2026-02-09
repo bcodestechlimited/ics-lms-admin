@@ -13,11 +13,8 @@ const CertificatesPage = () => {
 
   const templateQuery = useActiveCertificateTemplate();
   const signatureQuery = useActiveCertificateSignature();
-
   const uploadTemplate = useUploadCertificateTemplateFlow();
   const uploadSignature = useUploadCertificateSignatureFlow();
-
-  // console.log("template-query", templateQuery.data.data.data.data.url);
 
   const templateError = useMemo(() => {
     if (!templateFile) return "";

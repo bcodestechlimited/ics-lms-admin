@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { courseService } from "../services/course.service";
 import { useCourseStore } from "../store/course-store";
+import cloudinaryService from "../services/cloudinary.service";
+import uploadsService from "../services/upload.service";
 
 export const useGetCourse = () => {
   const queryParams = useCourseStore((state) => state.queryParams);
@@ -135,7 +137,9 @@ export const useUpdateCoursePricing = () => {
   return useMutation({
     mutationFn: (payload) => courseService.updateCoursePricingService(payload),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({queryKey: ["course", variables.courseId]});
+      queryClient.invalidateQueries({
+        queryKey: ["course", variables.courseId],
+      });
       queryClient.invalidateQueries({
         queryKey: ["course-pricing", variables.courseId],
       });
@@ -164,7 +168,7 @@ export const useGetCourseSummary = (payload) => {
 export const useGetPublishedCourse = () => {
   return useQuery({
     queryKey: ["published-courses"],
-    queryFn: () => courseService.getPublishedCourses({fields: "_id, title"}),
+    queryFn: () => courseService.getPublishedCourses({ fields: "_id, title" }),
   });
 };
 
@@ -174,7 +178,7 @@ export const useAssignCoursesToStaffs = () => {
   return useMutation({
     mutationFn: (payload) => courseService.assingCoursesToStaffs(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ["assign-courses-to-staffs"]});
+      queryClient.invalidateQueries({ queryKey: ["assign-courses-to-staffs"] });
     },
   });
 };
@@ -191,7 +195,7 @@ export const useDeleteCourse = (payload) => {
 
   return useMutation({
     mutationFn: () => courseService.deleteCourse(payload),
-    onSuccess: () => queryClient.invalidateQueries({queryKey: ["courses"]}),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["courses"] }),
   });
 };
 
@@ -202,6 +206,39 @@ export const useGetCourseAssessment = (id) => {
   });
 };
 
+export const useUpdateCourseImageFlow = ({ courseId }) => {
+  const queryClient = useQueryClient();
 
+  return useMutation({
+    mutationFn: async (payload) => {
+      // payload: { file }
+      const signaturePayload =
+        await uploadsService.getCloudinaryUploadSignature("course_image");
 
+      const cloudinaryResult =
+        await cloudinaryService.uploadWithPublicSignature({
+          file: payload.file,
+          signaturePayload,
+        });
 
+      // send only url + publicId to backend (as you requested)
+      const saved = await courseService.updateCourseImage(courseId, {
+        image: cloudinaryResult.url,
+        publicId: cloudinaryResult.publicId,
+      });
+
+      return { cloudinaryResult, saved };
+    },
+    onSuccess: () => {
+      // refresh course details page query
+      queryClient.invalidateQueries({
+        queryKey: ["courses", "byId", courseId],
+      });
+
+      // if you also cache course list
+      queryClient.invalidateQueries({
+        queryKey: ["courses"],
+      });
+    },
+  });
+};

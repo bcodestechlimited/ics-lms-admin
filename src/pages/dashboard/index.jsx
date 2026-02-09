@@ -114,7 +114,7 @@ const DashboardPage = () => {
     <div>
       <MainContainer>
         <MainHeader text={"Dashboard"} small={"A quick glance "} />
-        <div className="w-full bg-white rounded-3xl p-4">
+        <div className="w-full bg-white border rounded-3xl p-4">
           <div className="flex justify-between items-center">
             <h3 className="text-base text-skyblue font-bold satoshi">
               Overview

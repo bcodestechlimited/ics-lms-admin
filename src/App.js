@@ -19,7 +19,7 @@ import ResetPasswordPage from "./pages/auth/reset-password";
 import CertificatesPage from "./pages/certificates";
 import CouponsPage from "./pages/coupons";
 import CoursesPage from "./pages/courses";
-import CourseDetails from "./pages/courses/[id]";
+import CourseDetails from "./pages/courses/[id].jsx";
 import AddCoursePage from "./pages/courses/add-course";
 import CourseModulePage from "./pages/courses/add-module";
 import CourseAssessmentPage from "./pages/courses/course-assessment";
