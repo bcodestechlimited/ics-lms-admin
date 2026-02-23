@@ -71,7 +71,7 @@ const CertificatesPage = () => {
           </div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-1">
           {/* Template */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h2 className="text-base font-semibold text-slate-900">
@@ -142,7 +142,7 @@ const CertificatesPage = () => {
           </div>
 
           {/* Signature */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          {/* <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h2 className="text-base font-semibold text-slate-900">
               Signature (PNG)
             </h2>
@@ -217,7 +217,7 @@ const CertificatesPage = () => {
                 )}
               </div>
             </div>
-          </div>
+          </div>*/}
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-700 shadow-sm">
