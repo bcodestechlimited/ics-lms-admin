@@ -44,19 +44,6 @@ export const useEditCoupon = () => {
   });
 };
 
-// export const useUpdateCouponStatus = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: (payload) => couponService.updateCouponStatus(payload),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["get-active-coupon", "get-inactive-coupons", "get-a-coupon"],
-//       });
-//     },
-//   });
-// };
-
 export const useSendCouponToUsersForACourse = () => {
   const queryClient = useQueryClient();
 
@@ -80,6 +67,7 @@ export const useGetCourseCoupons = ({
       const params = new URLSearchParams();
       params.set("page", String(page));
       params.set("limit", String(limit));
+      console.log("limigt", limit);
       if (search) params.set("search", search);
 
       return couponService.getCourseCoupons(params);

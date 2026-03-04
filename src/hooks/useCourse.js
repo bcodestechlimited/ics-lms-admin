@@ -9,7 +9,7 @@ export const useGetCourse = () => {
 
   return useQuery({
     queryKey: ["courses", queryParams],
-    queryFn: () => courseService.getCoursesService(queryParams),
+    queryFn: () => courseService.getCoursesService({ page: 1, limit: 1000 }),
   });
 };
 
