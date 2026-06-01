@@ -37,9 +37,7 @@ class CouponService {
 
   async getCouponUsers(couponId) {
     try {
-      const { data } = await axiosInstance.get(
-        `${this.baseUrl}/${couponId}/users`,
-      );
+      const { data } = await axiosInstance.get(`${this.baseUrl}/${couponId}/users`);
 
       return data;
     } catch (error) {
@@ -67,10 +65,7 @@ class CouponService {
 
   async editCoupon(payload) {
     try {
-      const { data } = await axiosInstance.put(
-        `${this.baseUrl}/edit-coupon`,
-        payload,
-      );
+      const { data } = await axiosInstance.put(`${this.baseUrl}/edit-coupon`, payload);
       return data;
     } catch (error) {
       return "Error editing Coupon";
@@ -98,11 +93,9 @@ class CouponService {
       formData.append("percentage", payload.percentage);
       formData.append("expirationDate", payload.expirationDate);
 
-      const { data } = await axiosInstance.post(
-        `course-coupons/issue-coupon`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } },
-      );
+      const { data } = await axiosInstance.post(`course-coupons/issue-coupon`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       return data;
     } catch (error) {
@@ -115,15 +108,29 @@ class CouponService {
   }
 
   async getCourseCoupons(params) {
-    const { data } = await axiosInstance.get(
-      `course-coupons?${params.toString()}`,
-    );
+    const { data } = await axiosInstance.get(`course-coupons?${params.toString()}`);
     return data;
   }
 
   async getCourseCouponAnalytics() {
     const { data } = await axiosInstance.get(`course-coupons/analytics`);
     return data;
+  }
+
+  async extendCourseCoupon(couponId, payload) {
+    try {
+      const { data } = await axiosInstance.patch(
+        `course-coupons/${couponId}/extend-expiration`,
+        payload,
+      );
+      return data;
+    } catch (error) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to update expiration date";
+      throw new Error(message);
+    }
   }
 }
 

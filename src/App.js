@@ -2,12 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useState } from "react";
 import { Provider } from "react-redux";
-import {
-  createBrowserRouter,
-  Navigate,
-  Outlet,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { Toaster } from "sonner";
 import "./App.css";

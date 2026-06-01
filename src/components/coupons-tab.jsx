@@ -4,7 +4,7 @@ import { useGetCourseCoupons } from "../hooks/useCoupon";
 import Loader from "./loader";
 import CouponTable from "./tables/coupon-table";
 
-export const CourseCouponsTab = () => {
+export const CourseCouponsTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const pageFromUrl = Number(searchParams.get("page") || 1);
   const limitFromUrl = Number(searchParams.get("limit") || DEFAULT_LIMIT);
@@ -66,5 +66,3 @@ export const CourseCouponsTab = () => {
     />
   );
 };
-
-export default CourseCouponsTab;
