@@ -1,5 +1,5 @@
-import {useQuery} from "@tanstack/react-query";
-import {analyticsService} from "../services/analytics.service";
+import { useQuery } from "@tanstack/react-query";
+import { analyticsService } from "../services/analytics.service";
 
 export const useGetCoursesCreatedOverTime = () =>
   useQuery({
@@ -29,4 +29,22 @@ export const useGetTopEnrolledCourses = () =>
   useQuery({
     queryKey: ["analytics", "topEnrolledCourses"],
     queryFn: () => analyticsService.getTopEnrolledCourses(),
+  });
+
+export const useGetUserGrowth = () =>
+  useQuery({
+    queryKey: ["analytics", "userGrowth"],
+    queryFn: () => analyticsService.getUserGrowthOverTime(),
+  });
+
+export const useGetUserEngagement = () =>
+  useQuery({
+    queryKey: ["analytics", "userEngagement"],
+    queryFn: () => analyticsService.getUserEngagementMetrics(),
+  });
+
+export const useGetUserEnrollmentStats = () =>
+  useQuery({
+    queryKey: ["analytics", "userEnrollmentStats"],
+    queryFn: () => analyticsService.getUserEnrollmentStats(),
   });
