@@ -48,3 +48,9 @@ export const useGetUserEnrollmentStats = () =>
     queryKey: ["analytics", "userEnrollmentStats"],
     queryFn: () => analyticsService.getUserEnrollmentStats(),
   });
+
+export const useGetGlobalOutcomes = () =>
+  useQuery({
+    queryKey: ["analytics", "learningOutcomes"],
+    queryFn: () => analyticsService.getGlobalLearningOutcomes(),
+  });

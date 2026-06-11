@@ -49,6 +49,11 @@ class AnalyticsService {
     const { data } = await axiosInstance.get(`${this.baseUrl}/users/learning-stats`);
     return data;
   }
+
+  async getGlobalLearningOutcomes() {
+    const { data } = await axiosInstance.get(`${this.baseUrl}/users/learning-outcomes`);
+    return data;
+  }
 }
 
 export const analyticsService = new AnalyticsService();

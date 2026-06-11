@@ -14,9 +14,10 @@ import {
   useGetUserGrowth,
   useGetUserEngagement,
   useGetUserEnrollmentStats,
+  useGetGlobalOutcomes, // Added the new hook
 } from "../../hooks/useAnalytics";
 
-const KPICard = ({ title, value, loading }) => (
+const KPICard = ({ title, value, loading, suffix = "" }) => (
   <div className="p-5 border rounded-2xl bg-white shadow-sm flex flex-col justify-center">
     <h3 className="text-sm font-medium text-gray-500 satoshi">{title}</h3>
     {loading ? (
@@ -24,6 +25,7 @@ const KPICard = ({ title, value, loading }) => (
     ) : (
       <h4 className="text-3xl font-bold text-skyblue mt-1">
         {value?.toLocaleString() || 0}
+        {suffix}
       </h4>
     )}
   </div>
@@ -32,7 +34,6 @@ const KPICard = ({ title, value, loading }) => (
 const DashboardPage = () => {
   const navigate = useNavigate();
 
-  // --- Course Queries ---
   const { data: overTimeRes, isLoading: loadingOverTime } =
     useGetCoursesCreatedOverTime();
   const { data: byCategoryRes, isLoading: loadingCategory } = useGetCoursesByCategory();
@@ -40,16 +41,26 @@ const DashboardPage = () => {
   const { data: enrollRes, isLoading: loadingEnroll } = useGetEnrollmentCounts();
   const { data: topEnrolledRes, isLoading: loadingTop } = useGetTopEnrolledCourses();
 
-  // --- User Queries ---
   const { data: userGrowthRes, isLoading: loadingUserGrowth } = useGetUserGrowth();
   const { data: engagementRes, isLoading: loadingEngagement } = useGetUserEngagement();
   const { data: statsRes, isLoading: loadingStats } = useGetUserEnrollmentStats();
 
-  // Extract raw data (Fallback to 'data' if 'responseObject' isn't used by the new endpoints)
+  // Fetch new outcomes data
+  const { data: outcomesRes, isLoading: loadingOutcomes } = useGetGlobalOutcomes();
+
   const engagementData = engagementRes?.responseObject || engagementRes?.data;
   const learningStats = statsRes?.responseObject || statsRes?.data;
+  const outcomesData = outcomesRes?.responseObject || outcomesRes?.data;
 
-  // --- Data Processing (Memoized for Performance) ---
+  // Calculate platform stickiness (DAU/MAU ratio)
+  const stickinessRatio = useMemo(() => {
+    if (engagementData?.MAU > 0 && engagementData?.DAU > 0) {
+      return Math.round((engagementData.DAU / engagementData.MAU) * 100);
+    }
+    return 0;
+  }, [engagementData]);
+
+  // Chart Data Formatting (Existing Logic)
   const courseOverTime = useMemo(() => {
     const raw = overTimeRes?.responseObject ?? [];
     const filtered = raw.filter((d) => d.date != null && d.count != null);
@@ -116,7 +127,7 @@ const DashboardPage = () => {
     chart: { id: "user-growth" },
     xaxis: { categories: userGrowth.categories },
     stroke: { curve: "smooth" },
-    colors: ["#0ea5e9"], // Different color to distinguish from courses
+    colors: ["#0ea5e9"],
     title: { text: "New Users Joined", align: "center" },
   };
 
@@ -158,30 +169,57 @@ const DashboardPage = () => {
             />
           </div>
 
-          {/* New KPI Grid Section */}
-          <div className="mt-8 grid grid-cols-2 lg:grid-cols-3 gap-5">
+          {/* User & Engagement KPIs */}
+          <div className="mt-8 grid grid-cols-2 lg:grid-cols-4 gap-5">
             <KPICard
               title="Total Users"
               value={engagementData?.total}
               loading={loadingEngagement}
             />
             <KPICard
-              title="Monthly Active Users"
+              title="Daily Active Users (DAU)"
+              value={engagementData?.DAU}
+              loading={loadingEngagement}
+            />
+            <KPICard
+              title="Monthly Active Users (MAU)"
               value={engagementData?.MAU}
               loading={loadingEngagement}
             />
             <KPICard
-              title="Active Enrollments"
+              title="Platform Stickiness"
+              value={stickinessRatio}
+              loading={loadingEngagement}
+              suffix="%"
+            />
+          </div>
+
+          {/* Learning & Outcomes KPIs */}
+          <div className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-5">
+            <KPICard
+              title="Total Enrollments"
               value={learningStats?.totalActiveEnrollments}
               loading={loadingStats}
             />
-            {/* <KPICard
-              title="Assigned Courses"
-              value={learningStats?.totalAssignedEnrollments}
-              loading={loadingStats}
-            />*/}
+            <KPICard
+              title="Courses Completed"
+              value={outcomesData?.totalCompleted}
+              loading={loadingOutcomes}
+            />
+            <KPICard
+              title="Global Completion Rate"
+              value={outcomesData?.completionRate}
+              loading={loadingOutcomes}
+              suffix="%"
+            />
+            <KPICard
+              title="Certificates Issued"
+              value={outcomesData?.totalCertificates}
+              loading={loadingOutcomes}
+            />
           </div>
 
+          {/* Charts Section */}
           <div className="mt-10 flex flex-col lg:flex-row gap-6">
             <div className="w-full overflow-y-scroll rounded-2xl p-4 bg-gray-50/50">
               <h3 className="text-xl text-skyblue font-bold satoshi mb-5">

@@ -8,10 +8,7 @@ import { CourseExtensionRequestsTable } from "../../components/tables/extension-
 import { StudentsTable } from "../../components/tables/user-table";
 import { Button } from "../../components/ui/button";
 import { DEFAULT_LIMIT } from "../../helpers/service.helpers";
-import {
-  useRequestForCourseExtension,
-  useVerifyEmail,
-} from "../../hooks/use-admin";
+import { useRequestForCourseExtension, useVerifyEmail } from "../../hooks/use-admin";
 import { useAssignCoursesToStaffs } from "../../hooks/useCourse";
 import { useGetAllStudents } from "../../hooks/useUser";
 import { BulkVerifyModal } from "../../components/users/bulk-verify-modal";
@@ -146,9 +143,7 @@ const UsersPage = () => {
     <Shell pageHeader="All  Students" pageTitle="Users">
       <div className="flex items-center justify-end gap-2">
         <BulkVerifyModal handleRefetch={handleRefetch} />
-        <Button onClick={() => setIsUploadModalOpen(true)}>
-          Assign course(s)
-        </Button>
+        <Button onClick={() => setIsUploadModalOpen(true)}>Assign course(s)</Button>
       </div>
 
       {isUploadModalOpen && (
@@ -184,9 +179,7 @@ const UsersPage = () => {
       </div>
 
       <div className="mt-12">
-        <h3 className="font-medium text-[#013467] text-[20px]">
-          Extenstion Requests{" "}
-        </h3>
+        <h3 className="font-medium text-[#013467] text-[20px]">Extenstion Requests </h3>
 
         <div>
           {extensionRequestLoading ? (
