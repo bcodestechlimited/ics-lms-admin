@@ -44,18 +44,14 @@ const CoursesPage = () => {
     const page = Math.max(1, Math.min(nextPage, pagination.totalPages || 1));
     searchParams.set("page", String(page));
     searchParams.set("limit", String(pagination.limit || DEFAULT_LIMIT));
-    // Keep existing search param stable
     if (searchFromUrl) searchParams.set("search", searchFromUrl);
     setSearchParams(searchParams, { replace: true });
     setQueryParams({ page });
-    // Optional UX: scroll to table top on page change
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleLimitChange = (nextLimit) => {
-    const limit =
-      Number.isFinite(nextLimit) && nextLimit > 0 ? nextLimit : DEFAULT_LIMIT;
-    // Reset to page 1 whenever limit changes to avoid empty pages
+    const limit = Number.isFinite(nextLimit) && nextLimit > 0 ? nextLimit : DEFAULT_LIMIT;
     searchParams.set("page", "1");
     searchParams.set("limit", String(limit));
     if (searchFromUrl) searchParams.set("search", searchFromUrl);
@@ -127,20 +123,11 @@ export const CourseCard = ({ Img, title, desc, onClick, modal, setModal }) => {
   return (
     <>
       <div className="border relative bg-white rounded-lg w-full max-w-[300px] grid grid-rows-[110px_130px_50px] shadow-sm p-2">
-        <img
-          src={Img}
-          alt=""
-          className="rounded-lg w-full h-full object-cover"
-        />
+        <img src={Img} alt="" className="rounded-lg w-full h-full object-cover" />
 
         <div className="py-2 space-y-2 overflow-hidden">
-          <h5 className="font-medium text-secondary text-base satoshi">
-            {title}
-          </h5>
-          {ContentWriteup(
-            desc,
-            "satoshi text-xs font-normal text-main line-clamp-2",
-          )}
+          <h5 className="font-medium text-secondary text-base satoshi">{title}</h5>
+          {ContentWriteup(desc, "satoshi text-xs font-normal text-main line-clamp-2")}
         </div>
 
         <div className="w-full flex items-center justify-between">

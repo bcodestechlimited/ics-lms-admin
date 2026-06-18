@@ -1,5 +1,3 @@
-import AOS from "aos";
-import "aos/dist/aos.css";
 import ReactDOM from "react-dom/client";
 import "react-quill/dist/quill.snow.css";
 import "react-tooltip/dist/react-tooltip.css";
@@ -7,8 +5,6 @@ import App from "./App";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 // import * as serviceWorker from "./serviceWorker";
-
-AOS.init();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
