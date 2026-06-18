@@ -1,48 +1,19 @@
-export default function Loader({ height = 40, width = 40 }) {
-  return (
-    <div className="flex items-center justify-center">
-      <svg
-        className="animate-spin h-8 w-8 text-black mr-3"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        ></circle>
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
-      </svg>
-    </div>
-  );
-}
+import React from "react";
 
-export const PageLoader = () => {
+export default function Loader({ height = 30, width = 30, className = "" }) {
   return (
-    <div
-      id="loading-overlay"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800/5 backdrop-blur-lg backdrop-brightness-75
-"
-    >
+    <div className={`flex items-center justify-center ${className}`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        width={width}
+        height={height}
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="lucide lucide-loader-icon lucide-loader"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="lucide lucide-loader animate-spin text-blue-500"
       >
         <path d="M12 2v4" />
         <path d="m16.2 7.8 2.9-2.9" />
@@ -53,6 +24,20 @@ export const PageLoader = () => {
         <path d="M2 12h4" />
         <path d="m4.9 4.9 2.9 2.9" />
       </svg>
+    </div>
+  );
+}
+
+export const PageLoader = () => {
+  return (
+    <div
+      id="loading-overlay"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/20 backdrop-blur-sm transition-opacity"
+    >
+      <div className="flex flex-col items-center justify-center gap-3 bg-white px-8 py-6 rounded-2xl shadow-xl border border-gray-100">
+        <Loader width={40} height={40} />
+        <p className="text-sm font-medium text-gray-600 animate-pulse">Loading...</p>
+      </div>
     </div>
   );
 };
