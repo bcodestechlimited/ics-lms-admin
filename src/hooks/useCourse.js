@@ -9,9 +9,16 @@ export const useGetCourse = () => {
 
   return useQuery({
     queryKey: ["courses", queryParams],
-    queryFn: () => courseService.getCoursesService({ page: 1, limit: 1000 }),
+    queryFn: () =>
+      courseService.getCoursesService({
+        ...queryParams,
+        page: queryParams?.page || 1,
+        limit: queryParams?.limit || 10,
+      }),
   });
 };
+
+export const useGetDashboardCourse = () => {};
 
 export const useCreateCourse = () => {
   const queryClient = useQueryClient();
@@ -107,8 +114,7 @@ export const useGetCourseById = (id) => {
 export const useUpdateCourseAssessment = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload) =>
-      courseService.updateCourseAssessmentService(payload),
+    mutationFn: (payload) => courseService.updateCourseAssessmentService(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["course-assessment"] });
     },
@@ -150,8 +156,7 @@ export const useUpdateCoursePricing = () => {
 export const useUploadCourseCertificate = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload) =>
-      courseService.uploadCourseCertificateService(payload),
+    mutationFn: (payload) => courseService.uploadCourseCertificateService(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["course-certificate"] });
     },
@@ -215,11 +220,10 @@ export const useUpdateCourseImageFlow = ({ courseId }) => {
       const signaturePayload =
         await uploadsService.getCloudinaryUploadSignature("course_image");
 
-      const cloudinaryResult =
-        await cloudinaryService.uploadWithPublicSignature({
-          file: payload.file,
-          signaturePayload,
-        });
+      const cloudinaryResult = await cloudinaryService.uploadWithPublicSignature({
+        file: payload.file,
+        signaturePayload,
+      });
 
       // send only url + publicId to backend (as you requested)
       const saved = await courseService.updateCourseImage(courseId, {

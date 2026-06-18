@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useSendCouponToUsersForACourse } from "../hooks/useCoupon";
 import { useGetCourse } from "../hooks/useCourse";
+import { CourseCombobox } from "./searchable-select";
 
 const allowedTypes = new Set([
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -10,12 +11,7 @@ const allowedTypes = new Set([
   "application/csv",
 ]);
 
-const discountTypes = [
-  "FLASH_SALE",
-  "FIRST_TIME_USER",
-  "LIMITED_TIME",
-  "DISCOUNT",
-];
+const discountTypes = ["FLASH_SALE", "FIRST_TIME_USER", "LIMITED_TIME", "DISCOUNT"];
 
 const SendCourseCouponToUsersModal = ({ setState }) => {
   const [courseId, setCourseId] = useState("");
@@ -91,8 +87,7 @@ const SendCourseCouponToUsersModal = ({ setState }) => {
           <div>
             <h2 className="text-lg font-semibold">Send Course Coupon</h2>
             <p className="text-sm text-gray-600">
-              Select course, set discount, upload users, and send unique
-              coupons.
+              Select course, set discount, upload users, and send unique coupons.
             </p>
           </div>
 
@@ -109,7 +104,13 @@ const SendCourseCouponToUsersModal = ({ setState }) => {
         <div className="mt-6 grid grid-cols-2 gap-4">
           <div className="col-span-2">
             <label className="text-sm font-medium text-gray-700">Course</label>
-            <select
+            <CourseCombobox
+              courses={courses}
+              selectedId={courseId}
+              onChange={setCourseId}
+              disabled={isCoursesLoading || isLoading}
+            />
+            {/* <select
               value={courseId}
               onChange={(e) => setCourseId(e.target.value)}
               className="mt-1 w-full border rounded-md px-3 py-2 text-sm bg-white"
@@ -123,13 +124,11 @@ const SendCourseCouponToUsersModal = ({ setState }) => {
                   {c.title}
                 </option>
               ))}
-            </select>
+            </select>*/}
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Discount Type
-            </label>
+            <label className="text-sm font-medium text-gray-700">Discount Type</label>
             <select
               value={discountType}
               onChange={(e) => setDiscountType(e.target.value)}
@@ -145,9 +144,7 @@ const SendCourseCouponToUsersModal = ({ setState }) => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700">
-              Percentage
-            </label>
+            <label className="text-sm font-medium text-gray-700">Percentage</label>
             <input
               value={percentage}
               onChange={(e) => setPercentage(e.target.value)}
@@ -161,9 +158,7 @@ const SendCourseCouponToUsersModal = ({ setState }) => {
           </div>
 
           <div className="col-span-2">
-            <label className="text-sm font-medium text-gray-700">
-              Expiry Date
-            </label>
+            <label className="text-sm font-medium text-gray-700">Expiry Date</label>
             <input
               value={expirationDate}
               onChange={(e) => setExpirationDate(e.target.value)}
@@ -218,7 +213,7 @@ const SendCourseCouponToUsersModal = ({ setState }) => {
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-4 py-2 rounded-md bg-[#FF502A] hover:opacity-95 text-white text-sm flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+            className="px-4 py-2 rounded-md bg-blue-500 hover:opacity-95 text-white text-sm flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
             disabled={isLoading}
           >
             {isLoading && (

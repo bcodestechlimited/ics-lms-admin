@@ -14,7 +14,7 @@ import {
   useGetUserGrowth,
   useGetUserEngagement,
   useGetUserEnrollmentStats,
-  useGetGlobalOutcomes, // Added the new hook
+  useGetGlobalOutcomes,
 } from "../../hooks/useAnalytics";
 
 const KPICard = ({ title, value, loading, suffix = "" }) => (

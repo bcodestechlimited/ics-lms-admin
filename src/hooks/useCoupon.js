@@ -63,7 +63,6 @@ export const useGetCourseCoupons = ({ page = 1, limit = 20, search = "" } = {}) 
       const params = new URLSearchParams();
       params.set("page", String(page));
       params.set("limit", String(limit));
-      console.log("limigt", limit);
       if (search) params.set("search", search);
 
       return couponService.getCourseCoupons(params);
