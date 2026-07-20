@@ -2,18 +2,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useState } from "react";
 import { Provider } from "react-redux";
-import {
-  createBrowserRouter,
-  Navigate,
-  Outlet,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { Toaster } from "sonner";
 import "./App.css";
 import Sidebar from "./components/sidebar";
 import store from "./data/Store";
-import AuthGuard from "./layouts/auth-guard.layout";
+import AuthGuard from "./guards/auth.guard";
 import ForgotPasswordPage from "./pages/auth/forgot-password";
 import ResetPasswordPage from "./pages/auth/reset-password";
 import CertificatesPage from "./pages/certificates";
@@ -41,8 +36,10 @@ import { MainStudentById } from "./pages/student/[id]";
 import TemplatesPage from "./pages/templates";
 import UsersPage from "./pages/users";
 import Login from "./screens/home";
+import GuestGuard from "./guards/guest.guard";
 
 const queryClient = new QueryClient();
+
 const AuthenticatedLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const toggleSidebar = () => {
@@ -64,16 +61,21 @@ const AuthenticatedLayout = () => {
 
 const router = createBrowserRouter([
   {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/auth/forgot-password",
-    element: <ForgotPasswordPage />,
-  },
-  {
-    path: "/auth/reset-password",
-    element: <ResetPasswordPage />,
+    element: <GuestGuard />,
+    children: [
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/auth/forgot-password",
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: "/auth/reset-password",
+        element: <ResetPasswordPage />,
+      },
+    ],
   },
   {
     element: <AuthGuard />,

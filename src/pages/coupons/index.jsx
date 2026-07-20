@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SendCourseCouponToUsersModal from "../../components/coupons-modal";
-import CourseCouponsTab from "../../components/coupons-tab";
+import { CourseCouponsTable } from "../../components/coupons-tab";
 import SuccessModal from "../../components/modals/success-modal";
 import Shell from "../../components/shell";
 import CouponAnalyticsFull from "./coupon-analytics";
@@ -17,17 +17,13 @@ const CouponsPage = () => {
 
   return (
     <div>
-      <Shell
-        pageHeader={"Coupons Overview"}
-        pageTitle={"Coupons"}
-        btnAction={btn}
-      >
+      <Shell pageHeader={"Coupons Overview"} pageTitle={"Coupons"} btnAction={btn}>
         <div className="space-y-8">
           <div>
             <CouponAnalyticsFull />
           </div>
           <div>
-            <CourseCouponsTab />
+            <CourseCouponsTable />
           </div>
         </div>
       </Shell>

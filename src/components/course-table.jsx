@@ -1,19 +1,19 @@
-import {useEffect, useMemo, useState} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
-import {useDebounce} from "../hooks/use-debounce";
-import {useCourseStore} from "../store/course-store";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useDebounce } from "../hooks/use-debounce";
+import { useCourseStore } from "../store/course-store";
 import DataTable from "./tables";
 
 export default function CourseTable({
   courses,
   isLoading,
-  page, // ✅ from server
-  limit, // ✅ from server
-  totalPages, // ✅ from server
+  page,
+  limit,
+  totalPages,
   totalCount,
   filteredCount,
-  onPageChange, // ✅ parent fetch trigger
-  onLimitChange, // ✅ parent fetch trigger
+  onPageChange,
+  onLimitChange,
 }) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [data, setData] = useState(courses);
@@ -30,13 +30,13 @@ export default function CourseTable({
 
   // push search to URL + reset to page 1 (server-side search)
   useEffect(() => {
-    setQueryParams({search: debouncedFilter, page: 1});
+    setQueryParams({ search: debouncedFilter, page: 1 });
     const p = new URLSearchParams(searchParams);
     if (debouncedFilter) p.set("search", debouncedFilter);
     else p.delete("search");
     p.set("page", "1");
     p.set("limit", String(limit));
-    setSearchParams(p, {replace: true});
+    setSearchParams(p, { replace: true });
   }, [debouncedFilter, limit]); // eslint-disable-line
 
   useEffect(() => {
@@ -48,19 +48,17 @@ export default function CourseTable({
       {
         header: "NAME",
         accessorKey: "title",
-        cell: ({getValue}) => <span className="uppercase">{getValue()}</span>,
+        cell: ({ getValue }) => <span className="uppercase">{getValue()}</span>,
       },
       {
         header: "PUBLISHED STATUS",
         accessorKey: "isPublished",
-        cell: ({getValue}) => {
+        cell: ({ getValue }) => {
           const isPublished = getValue();
           return (
             <span
               className={`uppercase px-2 py-1 rounded ${
-                isPublished
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                isPublished ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
               }`}
             >
               {isPublished ? "PUBLISHED" : "NOT PUBLISHED"}
@@ -71,34 +69,30 @@ export default function CourseTable({
       {
         header: "CATEGORY",
         accessorKey: "category",
-        cell: ({getValue}) => <span className="uppercase">{getValue()}</span>,
+        cell: ({ getValue }) => <span className="uppercase">{getValue()}</span>,
       },
       {
         header: "SKILL LEVEL",
         accessorKey: "skillLevel",
-        cell: ({getValue}) => <span className="uppercase">{getValue()}</span>,
+        cell: ({ getValue }) => <span className="uppercase">{getValue()}</span>,
       },
       {
         header: "DATE CREATED",
         accessorKey: "createdAt",
-        cell: ({getValue}) => (
-          <span className="uppercase">
-            {new Date(getValue()).toLocaleDateString()}
-          </span>
+        cell: ({ getValue }) => (
+          <span className="uppercase">{new Date(getValue()).toLocaleDateString()}</span>
         ),
       },
       {
         header: "ACTION",
         accessorKey: "action",
-        cell: ({row}) => (
+        cell: ({ row }) => (
           <button
             className="uppercase bg-myblue text-white px-4 py-1 rounded-md"
             onClick={() => {
               const id = row.original._id;
               const title = row.original.title;
-              navigate(
-                `/courses/${id}?course_title=${encodeURIComponent(title)}`
-              );
+              navigate(`/courses/${id}?course_title=${encodeURIComponent(title)}`);
             }}
           >
             View
@@ -106,7 +100,7 @@ export default function CourseTable({
         ),
       },
     ],
-    [navigate]
+    [navigate],
   );
 
   return (

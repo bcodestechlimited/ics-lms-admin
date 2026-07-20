@@ -44,19 +44,6 @@ export const useEditCoupon = () => {
   });
 };
 
-// export const useUpdateCouponStatus = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: (payload) => couponService.updateCouponStatus(payload),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         queryKey: ["get-active-coupon", "get-inactive-coupons", "get-a-coupon"],
-//       });
-//     },
-//   });
-// };
-
 export const useSendCouponToUsersForACourse = () => {
   const queryClient = useQueryClient();
 
@@ -69,11 +56,7 @@ export const useSendCouponToUsersForACourse = () => {
   });
 };
 
-export const useGetCourseCoupons = ({
-  page = 1,
-  limit = 20,
-  search = "",
-} = {}) => {
+export const useGetCourseCoupons = ({ page = 1, limit = 20, search = "" } = {}) => {
   return useQuery({
     queryKey: ["get-course-coupons", { page, limit, search }],
     queryFn: async () => {
@@ -91,5 +74,18 @@ export const useGetCourseCouponAnalytics = () => {
   return useQuery({
     queryKey: ["get-course-coupon-analytics"],
     queryFn: async () => couponService.getCourseCouponAnalytics(),
+  });
+};
+
+export const useExtendCourseCoupon = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ couponId, expirationDate }) =>
+      couponService.extendCourseCoupon(couponId, { expirationDate }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get-course-coupons"] });
+      queryClient.invalidateQueries({ queryKey: ["get-course-coupon-analytics"] });
+    },
   });
 };
